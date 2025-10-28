@@ -26,6 +26,8 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 
+import docker  # type: ignore
+
 # Docker is optional at import time. Import types only for type checkers,
 # and import the runtime module lazily where needed.
 if TYPE_CHECKING:  # pragma: no cover - only for type checking
@@ -198,13 +200,15 @@ class Launcher(LoopModule):
         # Mount the temporary directory with the docker container
         container = None
         volume = None
+        # try:
+        container, volume = Launcher._docker_wrapper(
+            image_name=docker_image_name,
+            container_name=docker_container_name,
+            tmp_dir_obj=tmp_dir,
+            launch_script_name=launch_script_name,
+        )
         try:
-            container, volume = Launcher._docker_wrapper(
-                image_name=docker_image_name,
-                container_name=docker_container_name,
-                tmp_dir_obj=tmp_dir,
-                launch_script_name=launch_script_name,
-            )
+            pass
         except Exception as e:
             logger.error(
                 f"Design number {design_number} failed to run in docker container. Skipped. Copied files were:"
@@ -233,19 +237,21 @@ class Launcher(LoopModule):
 
     @staticmethod
     def cleanup(container: Container | None, volume: Volume | None):
-        try:
-            container.stop()
-        except Exception:
-            pass
-        try:
-            container.remove()
-        except Exception:
-            pass
-        try:
-            volume.remove(force=True)
-        except Exception as e:
-            logger.error(e)
-            pass
+        if container is not None:
+            try:
+                container.stop()
+            except Exception:
+                pass
+            try:
+                container.remove()
+            except Exception:
+                pass
+        if volume is not None:
+            try:
+                volume.remove(force=True)
+            except Exception as e:
+                logger.error(e)
+                pass
 
     @staticmethod
     def _docker_wrapper(
@@ -258,12 +264,10 @@ class Launcher(LoopModule):
         assert launch_script_name is not None, "launch_script_name must be provided to the docker_wrapper."
 
         # Setup a docker client
-        # import os
-        # os.environ['DOCKER_HOST'] = f'unix:///{os.environ.get("XDG_RUNTIME_DIR")}/docker.sock'
-        # Import docker lazily so the module can be imported without docker installed/running
-        import docker  # type: ignore
-
         client = docker.from_env()
+
+        host_uid = os.getuid()
+        host_gid = os.getgid()
 
         # Create a volume that attaches to the temporary directory
         volume_name = container_name + "_volume"
@@ -281,29 +285,23 @@ class Launcher(LoopModule):
 
         # Mount the temporary file volume
         volumes = {volume_name: {"bind": "/app/tmp", "mode": "rw"}}
-        command = ["bash", f"/app/tmp/{launch_script_name}.sh"]
-        # logger.info(command)
 
-        # if launch_script_name == "launch_script_evaluation_switching_activity":
-        #     command = ["sleep", "infinity"]
-        # if launch_script_name == "launch_script_power_extraction":
-        #     command = ["sleep", "infinity"]
+        # Run as root, execute the script, then fix ownership of ALL files in /app/tmp
+        cmd = f"""
+        set -e
+        bash /app/tmp/{launch_script_name}.sh
+        chown -R {host_uid}:{host_gid} /app/tmp
+        """
 
         # Run the container with command to execute the program
         container = client.containers.run(
             image=image_name,
             volumes=volumes,
-            # user=os.getuid(),
-            # group_add=[
-            #     os.getgid(),
-            # ],
+            user="root",  # Run as root to have permissions in /app and /prog
             name=container_name,
             working_dir="/app",
-            command=command,
-            # command=["sleep", "infinity"],
+            command=["bash", "-c", cmd],
             remove=True,
-            # cpu_period=100000,  # 100 ms per period # TODO: make this parameterizable for SLURM Cluster execution
-            # cpu_quota=100000,   # 100% of 1 CPU
         )
 
         return container, volume
