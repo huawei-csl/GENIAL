@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 import json
 import time
+import pandas as pd
 
 
 def run(cmd, env=None, cwd=None):
@@ -17,6 +18,161 @@ def run(cmd, env=None, cwd=None):
         stderr=subprocess.PIPE,
         text=True,
     )
+
+
+def test_analyzer_parse_args_basic():
+    """Test that Analyzer.parse_args works with minimal arguments."""
+    from genial.experiment.task_analyzer import Analyzer
+
+    # Save original sys.argv
+    original_argv = sys.argv.copy()
+
+    try:
+        # Set minimal required arguments for parsing
+        sys.argv = [
+            "task_analyzer.py",
+            "--experiment_name",
+            "test_experiment",
+            "--output_dir_name",
+            "test_output",
+            "--rebuild_db",
+            "--ignore_user_prompts",
+        ]
+
+        args_dict = Analyzer.parse_args()
+
+        # Basic assertions
+        assert args_dict is not None
+        assert isinstance(args_dict, dict)
+        assert args_dict["experiment_name"] == "test_experiment"
+        assert args_dict["output_dir_name"] == "test_output"
+        assert args_dict["rebuild_db"] is True
+        assert args_dict["ignore_user_prompts"] is True
+
+    finally:
+        # Restore original sys.argv
+        sys.argv = original_argv
+
+
+def test_analyzer_load_database_empty(tmp_path):
+    """Test that _load_database handles non-existent files correctly."""
+    from genial.experiment.task_analyzer import Analyzer
+
+    non_existent_path = tmp_path / "non_existent.db.pqt"
+
+    # With force=True, should return empty DataFrame
+    df = Analyzer._load_database(non_existent_path, force=True)
+
+    assert isinstance(df, pd.DataFrame)
+    assert df.empty
+
+
+def test_analyzer_load_database_valid(tmp_path):
+    """Test that _load_database can load a valid parquet file."""
+    from genial.experiment.task_analyzer import Analyzer
+
+    # Create a simple test database
+    test_data = pd.DataFrame({"design_number": ["res_0001", "res_0002"], "value": [100, 200]})
+
+    db_path = tmp_path / "test.db.pqt"
+    test_data.to_parquet(db_path, index=False)
+
+    # Load it back
+    df = Analyzer._load_database(db_path, force=True)
+
+    assert isinstance(df, pd.DataFrame)
+    assert not df.empty
+    assert len(df) == 2
+    assert "design_number" in df.columns
+    assert list(df["design_number"]) == ["res_0001", "res_0002"]
+
+
+def test_analyzer_instantiation(env_and_paths):
+    """Test that we can instantiate an Analyzer object."""
+    from genial.experiment.task_analyzer import Analyzer
+    from genial.config.config_dir import ConfigDir
+
+    os.environ.copy()
+    exp = env_and_paths["experiment_name"]
+    out_dir = env_and_paths["output_dir_name"]
+
+    # Save original sys.argv
+    original_argv = sys.argv.copy()
+
+    try:
+        # Set up arguments for ConfigDir
+        sys.argv = [
+            "task_analyzer.py",
+            "--experiment_name",
+            exp,
+            "--output_dir_name",
+            out_dir,
+            "--rebuild_db",
+            "--ignore_user_prompts",
+            "--skip_swact",
+            "--skip_power",
+        ]
+
+        # Create ConfigDir
+        dir_config = ConfigDir(is_analysis=True)
+
+        # Create Analyzer - this tests basic initialization
+        analyzer = Analyzer(
+            dir_config=dir_config,
+            skip_log_init=True,  # Skip log initialization for testing
+        )
+
+        # Basic assertions
+        assert analyzer is not None
+        assert analyzer.dir_config is not None
+        assert analyzer.analysis_out_dir.exists()
+        assert hasattr(analyzer, "synth_df")
+        assert hasattr(analyzer, "gener_df")
+
+    finally:
+        # Restore original sys.argv
+        sys.argv = original_argv
+
+
+def test_analyzer_database_initialization(env_and_paths):
+    """Test that Analyzer initializes its databases correctly."""
+    from genial.experiment.task_analyzer import Analyzer
+    from genial.config.config_dir import ConfigDir
+
+    os.environ.copy()
+    exp = env_and_paths["experiment_name"]
+    out_dir = env_and_paths["output_dir_name"]
+
+    original_argv = sys.argv.copy()
+
+    try:
+        sys.argv = [
+            "task_analyzer.py",
+            "--experiment_name",
+            exp,
+            "--output_dir_name",
+            out_dir,
+            "--rebuild_db",
+            "--ignore_user_prompts",
+            "--skip_swact",
+            "--skip_power",
+        ]
+
+        dir_config = ConfigDir(is_analysis=True)
+        analyzer = Analyzer(dir_config=dir_config, skip_log_init=True)
+
+        # Check that database paths are set correctly
+        assert hasattr(analyzer, "output_synth_db_path")
+        assert hasattr(analyzer, "output_gener_db_path")
+        assert analyzer.output_synth_db_path.name == "synth_analysis.db.pqt"
+        assert analyzer.output_gener_db_path.name == "gener_analysis.db.pqt"
+
+        # Check that DataFrames are initialized (should be empty with rebuild_db)
+        assert isinstance(analyzer.synth_df, pd.DataFrame)
+        assert isinstance(analyzer.gener_df, pd.DataFrame)
+
+    finally:
+        sys.argv = original_argv
 
 
 def test_analyzer_end_to_end_synth_only(env_and_paths):
