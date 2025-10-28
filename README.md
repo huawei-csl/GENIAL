@@ -108,7 +108,10 @@ cp .env.template .env
 # Then edit: set SRC_DIR, WORK_DIR, GL_TOKEN
 ```
 
-
+Get the pre-trained weights from the release files and put them in the resources:
+```bash
+curl -L -o resources/pretrained_model/embedding/117_0.0102_000.ckpt https://github.com/huawei-csl/GENIAL/releases/download/v0.1.0/117_0.0102_000.ckpt
+```
 
 ### 2. Set up Python environment with [`uv`](https://astral.sh/uv/)
 
