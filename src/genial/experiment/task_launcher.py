@@ -267,13 +267,15 @@ class Launcher(LoopModule):
 
         # Create a volume that attaches to the temporary directory
         volume_name = container_name + "_volume"
+        tmp_path = Path(tmp_dir_obj.name)
+        tmp_path.chmod(0o1777)  # sticky world-writable tmp, drwxrwxrwt
         volume = client.volumes.create(
             name=volume_name,
             driver="local",
             driver_opts={
                 "type": "none",
                 "o": "bind",
-                "device": str(Path(tmp_dir_obj.name)),
+                "device": str(tmp_path),
             },
         )
 
