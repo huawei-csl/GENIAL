@@ -265,7 +265,7 @@ def prepare_temporary_directory(shared_files: list[str | Path], delete: bool = T
                 raise ValueError(f"File to copy could not be found: {file}")
 
         if file.is_file():
-            copied_filepath = shutil.copy(file, tmp_dir_path)
+            copied_filepath = shutil.copy2(file, tmp_dir_path)
             FileCompressionHandler.decompress_if_compressed(Path(copied_filepath))
 
         elif file.is_dir():
