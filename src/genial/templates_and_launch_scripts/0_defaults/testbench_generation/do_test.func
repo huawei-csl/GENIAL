@@ -1,0 +1,13 @@
+    # ##################################
+    # ${test_type}
+    # ##################################
+    if True:
+        tb.log.info(f"Running ${test_type}...")
+        tb.renew_database(db_filepath="results_${test_type}_db.pqt")
+        await ${test_type}_test(tb, nb_iter=${nb_iter})
+
+        await RisingEdge(tb.dut.clk_ci)
+        await RisingEdge(tb.dut.clk_ci)
+
+        tb.save_database()
+    

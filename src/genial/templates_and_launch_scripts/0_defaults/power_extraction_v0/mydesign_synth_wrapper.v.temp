@@ -1,0 +1,21 @@
+
+module mydesign_synth_wrapper #(
+    parameter int N_IN = $in_bitwidth,
+    parameter int N_OUT = $out_bitwidth
+    ) (
+    input logic clk_ci,
+    input logic rst_ni,
+    input logic [N_IN-1:0] operand_a_i,
+    input logic [N_IN-1:0] operand_b_i,
+    output logic [N_OUT-1:0] result_o
+);
+
+$post_synth_design_top_name i_mydesign_synthesized(
+    .clk_ci(clk_ci),
+    .rst_ni(rst_ni),
+    .operand_a_i(operand_a_i),
+    .operand_b_i(operand_b_i),
+    .result_o(result_o)
+    );
+
+endmodule

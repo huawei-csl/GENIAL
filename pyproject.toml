@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "genial"
+dynamic = [
+    "dependencies"
+]
+version = "0.1.0"
+authors = [
+    { name="Maxence Bouvier", email="maxence.bouvier.pro@gmail.com" },
+    { name="Ryan Amaudruz", email="ryan.amaudruz@h-partners.com" },
+    { name="Felix Arnold", email="felix.arnold@h-partners.com" }
+]
+description = "The package used for exploring the encoding to switching activity relationship."
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/genial"]
+
+[project.scripts]
+task_analyzer = "genial.experiment.task_analyzer:main_cli"
+task_analyzer_find_classic_encoding_design_number = "genial.experiment.task_analyzer:main_find_classic_encoding_design_number"
+plot_swact_ncells = "genial.experiment.task_analyzer:main_plot_swact_vs_ncells"
+task_launcher = "genial.experiment.task_launcher:main_cli"
+task_trainer = "genial.training.mains.trainer_enc_to_score_value:main_cli"
+run_genial_loop = "genial.loop.full_run_v2:main"
+analyze_genial_loop = "genial.loop.analyze_v2:main"
+check_status = "genial.utils.check_status:main_cli"
+merge_out_dirs = "genial.utils.merge_output_dirs:main"
+get_complexity = "genial.tools.get_complexity_from_file:main_cli"
+visualize_encoding = "genial.tools.plot_encoding_from_file:main_cli"
+generate_design = "genial.tools.generate_design_from_encoding_dict:main_cli"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.black]
+line-length=120
+
+[tool.ruff]
+line-length=120
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+# Configure uv to resolve the local 'flowy' package from the submodule
+# This makes `uv pip install -e .` install `ext/flowy` automatically when present.
+[tool.uv.sources]
+flowy = { path = "ext/flowy", editable = true }
+swact  = { path = "ext/swact",  editable = true }
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+  "ext/swact/tests",
+]
+# Avoid collecting nested vendored tests that duplicate names
+norecursedirs = [
+  "ext/flowy",
+]
+markers = [
+  "order: control execution order",
+  "long: long-running tests",
+]
+addopts = ["--order-dependencies",]
+

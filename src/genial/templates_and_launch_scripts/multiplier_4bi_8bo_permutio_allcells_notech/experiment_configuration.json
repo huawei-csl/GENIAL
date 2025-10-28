@@ -1,0 +1,10 @@
+{
+    "design_type":"multiplier",
+    "input_bitwidth":"4",
+    "output_bitwidth":"8",
+    "input_encoding_type":"twos_comp_both",
+    "output_encoding_type":"twos_comp_both",
+    "top_synth_instance_names":["mydesign_top", "mydesign_comb"],
+    "do_tests_list":["normal_random", "fullsweep"],
+    "nb_iter":12288
+}

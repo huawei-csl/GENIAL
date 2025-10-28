@@ -1,0 +1,8 @@
+{
+    "input_ports": [
+        "input_a"
+    ],
+    "output_ports": [
+        "output"
+    ]
+}

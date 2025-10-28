@@ -1,0 +1,20 @@
+activation: gelu
+batch_size: 2048
+checkpoint_metric: acc/golden_acc
+d_model: 512
+dim_feedforward: 1024
+dropout: 0.1
+encoding_width: 4
+final_layer_type: identity
+mask_type: none
+max_restart_lr: 0.00025
+max_scratch_lr: 0.0005
+max_sequence_length: 16
+nhead: 8
+n_cls_token: 0
+num_layers: 8
+score_rescale_mode: standardize
+score_type: trans
+vae_constraint: True
+task:
+  - ssl

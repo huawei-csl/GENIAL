@@ -1,0 +1,10 @@
+{
+    "design_type":"multiplier",
+    "input_bitwidth":"4",
+    "output_bitwidth":"8",
+    "input_encoding_type":"unsigned_int",
+    "output_encoding_type":"unsigned_int",
+    "top_synth_instance_name":"mydesign_top",
+    "do_tests_list":["fullsweep"],
+    "nb_iter":4096
+}

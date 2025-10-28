@@ -1,0 +1,8 @@
+{
+    "input_ports": [
+        "current_state"
+    ],
+    "output_ports": [
+        "next_state"
+    ]
+}

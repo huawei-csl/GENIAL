@@ -1,0 +1,11 @@
+[submodule "ext/flowy"]
+    path = ext/flowy
+	url = ../flowy.git
+
+[submodule "ext/oss_eda_base"]
+    path = ext/oss_eda_base
+	url = ../oss_eda_base.git
+
+[submodule "ext/swact"]
+	path = ext/swact
+	url = ../swact.git

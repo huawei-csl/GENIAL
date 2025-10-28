@@ -1,0 +1,390 @@
+# cocotb related imports
+import cocotb
+from cocotb.clock import Clock
+from cocotb.triggers import RisingEdge, Timer
+from cocotb.binary import BinaryRepresentation, BinaryValue
+
+# from cocotb.regression import TestFactory
+import logging
+
+import numpy as np
+import math
+
+from pathlib import Path
+import pandas as pd
+from typing import Any
+import random
+
+import struct
+
+from copy import copy
+
+class TestDatabaseInterface:
+    """
+    This class is used to interface with the database that stores the test results.
+    """
+
+    def __init__(self, db_filepath: Path, columns: list[str]) -> None:
+        self.columns = columns 
+        self.db_filepath = db_filepath
+        self.all_vals = []
+
+    def _update_dataframe(self, new_data: dict[str:Any]) -> None:
+        """Updates an existing DataFrame in a CSV file with new data."""
+
+        # Build the dictionary that will server to build add a row
+        # new_df = pd.DataFrame(new_data, index=[0])
+
+        # Save the updated Dataframe
+        self.all_vals.append(new_data)
+
+    def update_dataframe(self, new_data: dict[str:Any]) -> None:
+        """Updates an existing DataFrame in a CSV file with new data."""
+        self._update_dataframe(new_data)
+
+    def save_db(self, wire_list:list[str]|None) -> Path:
+        """Saves the DataFrame to a CSV file."""
+        df = pd.DataFrame(self.all_vals)
+        self.validate_db(df)
+        # bool_map = {col: bool for col in wire_list}
+        # df = df.astype(bool_map)
+        df.to_parquet(self.db_filepath, index=False)
+        return self.db_filepath
+    
+    def validate_db(self, df:pd.DataFrame) -> None:
+        """ Assert exactness of db """
+$validating_function        
+
+
+clock_frequency_Mhz = 100
+clock_period_ns = 1 / clock_frequency_Mhz * 1e3
+
+
+# We will instantiate this TB object in every test so that all the required functions can be accessed
+# from within this class.
+class TestBench(object):
+    """
+    This is the top level testbench class.
+    Args:
+        dut: The DUT object that is passed to the testbench.
+
+    """
+
+    # The init method of this class can be used to do some setup like logging etc, start the
+    # toggling of the clock and also initialize the internal to their pre-reset value.
+    def __init__(self, dut, db_filepath:str|Path="results_db.csv"):
+        self.dut = dut
+
+        # Measure enabled range
+        self.in_bitwidth = int(dut.N_IN)
+        self.min_in_value = $min_val_in_included # Using positive and negative values - so range is divided by two
+        self.max_in_value = $max_val_in_included
+        
+        self.out_bitwidth = int(dut.N_OUT)
+        self.min_out_value = $min_val_out_included # Using positive and negative values - so range is divided by two
+        self.max_out_value = $max_val_out_included
+
+        self.log = logging.getLogger("cocotb_tb")
+        self.log.setLevel(logging.DEBUG)
+
+        self.wire_list = $wire_list
+        self.wire_handles = {wire: self.dut.i_mydesign_synthesized._id(wire, extended=False) for wire in self.wire_list}
+
+        self._db_columns = [
+            "input_a_val",
+            "input_a_rep",
+            "input_b_val",
+            "input_b_rep",
+            "output_val",
+            "output_rep",
+        ] + self.wire_list
+
+        # self.encodings_dict = $encodings_dict
+        self.encodings_dict = $encodings_dict
+        self.encodings_dict_reversed = $encodings_dict_reversed
+
+        self.results_db_if = TestDatabaseInterface(db_filepath=Path(db_filepath), columns=self._db_columns)
+
+        # start the clock as a parallel process.
+        cocotb.start_soon(Clock(self.dut.clk_ci, clock_period_ns, units="ns").start())
+        self.log.info(f"Clock started with clock period of {clock_period_ns}ns")
+        self.log.info(f"bitwidth read is {self.in_bitwidth} which is of type {type(self.in_bitwidth)}")
+
+    def renew_database(self, db_filepath:str|Path) -> None:
+        """ Replace the current database with a new one after saving the currently existing on as csv. """
+        self.results_db_if = TestDatabaseInterface(db_filepath=Path(db_filepath), columns=self._db_columns)
+
+    def save_database(self) -> None:
+        """ Save the currently existing database as a csv file. """
+        self.log.info(f"Saving db ...")
+        db_path = self.results_db_if.save_db(self.wire_list)
+        self.log.info(f"Database saved in {db_path}")
+        
+    # Note the 'async def' keyword here. It means that this is a coroutine that needs to
+    # be awaited.
+    async def cycle_reset(self):
+        """Reset the DUT by asserting the reset signal for a few clock cycles."""
+        self.dut.rst_ni.setimmediatevalue(1)
+        await RisingEdge(self.dut.clk_ci)
+        await RisingEdge(self.dut.clk_ci)
+        self.dut.rst_ni.value = 0  # This is how cocotb lets you control the value of any signal inside the design
+        await RisingEdge(self.dut.clk_ci)
+        await RisingEdge(self.dut.clk_ci)
+        self.dut.rst_ni.value = 1
+        await RisingEdge(self.dut.clk_ci)
+        await RisingEdge(self.dut.clk_ci)
+
+def get_internal_values(tb):
+    """ Extract binary values of all wires in wire_list """
+
+    val_dict = {wire:str(handle.value) for wire, handle in tb.wire_handles.items()}
+
+    return val_dict
+
+async def apply_values(tb, operand_a:int, operand_b:int) -> None:
+    """Simply applies the right values to the right dut inputs."""
+
+    _operand_a = BinaryValue(n_bits=tb.in_bitwidth, bigEndian=False)
+    _operand_b = BinaryValue(n_bits=tb.in_bitwidth, bigEndian=False)
+    
+    # Get representations in design encoding
+    operand_a_rep = tb.encodings_dict["input"][operand_a]
+    operand_b_rep = tb.encodings_dict["input"][operand_b]
+    _operand_a.binstr = operand_a_rep
+    _operand_b.binstr = operand_b_rep
+    
+    # Assign values to dut
+    tb.dut.operand_a_i.value = _operand_a
+    tb.dut.operand_b_i.value = _operand_b
+    
+    if cocotb.plusargs.get("comb_only") is not None:
+        # Because the IHP130 PDK does not give correct models for regiters
+        # We removed them for simulation purposes
+        await RisingEdge(tb.dut.clk_ci)
+        a_val = copy(tb.dut.operand_a_i.value)
+        b_val = copy(tb.dut.operand_b_i.value)
+    else:
+        a_val = copy(tb.dut.operand_a_i.value)
+        b_val = copy(tb.dut.operand_b_i.value)
+        await RisingEdge(tb.dut.clk_ci)
+    
+    # Read all internal values
+    wire_dict = get_internal_values(tb=tb)
+
+    # Check values exist
+    if ('z' in a_val.binstr)\
+        or ('z' in a_val.binstr):
+        return None
+    
+    # Store representations
+    a_rep = a_val.binstr
+    b_rep = b_val.binstr
+    c_rep = tb.dut.result_o.value.binstr
+    
+    # Store values
+    a_val = tb.encodings_dict_reversed["input"][a_rep]
+    b_val = tb.encodings_dict_reversed["input"][b_rep]
+    c_val = tb.encodings_dict_reversed["output"][c_rep]
+    
+    # Add stimulus to database
+    res_dict = {
+            "input_a_val": a_val,
+            "input_a_rep": a_rep,
+            "input_b_val": b_val,
+            "input_b_rep": b_rep,
+            "output_val": c_val,
+            "output_rep": c_rep,
+            }
+    res_dict.update(wire_dict)
+
+    tb.results_db_if.update_dataframe(res_dict)
+    
+    
+async def fullsweep_test(tb, **kwargs):
+    """ Test that applies all possible switching pairs """
+    a:int
+    b:int
+
+    all_pairs = []
+    for a in range(tb.min_in_value, tb.max_in_value+1):
+        for b in range(tb.min_in_value, tb.max_in_value+1):
+            all_pairs.append((a,b))
+    nb_pairs = len(all_pairs)
+    total_pattern_number = (nb_pairs*(nb_pairs+1)/2)
+    tb.log.info(f"Total number of possible input pattern pairs {nb_pairs}")
+    tb.log.info(f"Fullsweep is going run for {total_pattern_number} iterations")
+    
+    for idx, curr_pair in enumerate(all_pairs):
+        curr_a, curr_b = curr_pair 
+        await apply_values(tb, curr_a, curr_b)
+        for next_pair in all_pairs[idx+1:]:
+            next_a, next_b = next_pair
+            await apply_values(tb, next_a, next_b)
+            await apply_values(tb, curr_a, curr_b)
+    
+    await apply_values(tb, a, b)
+
+async def uniform_random_test(tb, nb_iter=1000000):
+
+    count = 0
+    while count != nb_iter:
+        a = random.randint(tb.min_in_value,tb.max_in_value)
+        b = random.randint(tb.min_in_value,tb.max_in_value)
+        await apply_values(tb, a, b)
+        await apply_values(tb, a, b)
+            #if count %(nb_iter/1000) == 0:
+            #    tb.log.info(f"Uniform random test iteration done at {(count+1)/nb_iter*100:.1f}%")
+        await apply_values(tb, a, b)
+            #if count %(nb_iter/1000) == 0:
+            #    tb.log.info(f"Uniform random test iteration done at {(count+1)/nb_iter*100:.1f}%")
+        count += 1
+
+
+def _normal_sample(tb, nb_iter:int, std:float=3.0, mean:float=0.0, one_change:bool=False, magnitude:bool=False):
+    # Define the desired range and sample size
+    lower_bound = min(tb.encodings_dict["input"].keys())#tb.min_in_value
+    upper_bound = max(tb.encodings_dict["input"].keys()) #tb.max_in_value
+
+    if not one_change:
+        # Sample from a standard normal distribution
+        a_samples = np.random.normal(loc=mean, scale=std, size=nb_iter)  #Mean = 0, Std Dev = 1
+        b_samples = np.random.normal(loc=mean, scale=std, size=nb_iter)  #Mean = 0, Std Dev = 1
+    else:
+        a_samples = np.random.normal(loc=mean, scale=std, size=nb_iter // 2 + 1)
+        a_samples = np.repeat(a_samples, 2)
+        a_samples = a_samples[0:nb_iter]
+
+        b_samples = np.random.normal(loc=mean, scale=std, size=nb_iter // 2 + 1)
+        b_samples = np.repeat(b_samples, 2)
+        b_samples = np.roll(b_samples, 1)
+        b_samples = b_samples[0:nb_iter]
+
+    if magnitude:
+        # Apply the magnitude transformation
+        a_samples = np.abs(a_samples)
+        b_samples = np.abs(b_samples)
+
+    # Round to integers
+    a_integers = np.round(a_samples).astype(int)
+    b_integers = np.round(b_samples).astype(int)
+
+    # Clip to the desired range
+    a_clipped_integers = np.clip(a_integers, lower_bound, upper_bound)
+    b_clipped_integers = np.clip(b_integers, lower_bound, upper_bound)
+    return a_clipped_integers, b_clipped_integers
+
+
+def _normal_sample_old(tb, nb_iter:int, invert:bool=False, std:float=1.0, mean:float=0.0):
+    # Define the desired range and sample size
+    lower_bound = tb.min_in_value
+    upper_bound = tb.max_in_value
+
+    # Sample from a standard normal distribution
+    a_samples = np.random.normal(loc=mean, scale=std, size=nb_iter)  #Mean = 0, Std Dev = 1
+    b_samples = np.random.normal(loc=mean, scale=std, size=nb_iter)  #Mean = 0, Std Dev = 1
+
+    if invert:
+        # Step 1: Generate normal distribution samples
+        a_samples = np.tanh(a_samples * 1.0)
+        b_samples = np.tanh(b_samples * 1.0)
+        
+        # Step 2: Apply transformation using tanh
+        a_scaled_samples = np.tanh(a_samples * 2)
+        b_scaled_samples = np.tanh(b_samples * 2)
+    
+        # Step 3: Rescale to the asymmetric range [lower_bound, upper_bound]
+        a_scaled_samples = (upper_bound - lower_bound) / 2 * a_scaled_samples + (upper_bound + lower_bound) / 2
+        b_scaled_samples = (upper_bound - lower_bound) / 2 * b_scaled_samples + (upper_bound + lower_bound) / 2
+        
+    else:
+        # Scale and shift to the desired range
+        # A standard normal distribution spans approximately 6 units in total between −3 and +3 (since 99.7% of the values are within this range).
+        a_scaled_samples = a_samples * ((upper_bound - lower_bound) / 6) + ((upper_bound + lower_bound) / 2)
+        b_scaled_samples = b_samples * ((upper_bound - lower_bound) / 6) + ((upper_bound + lower_bound) / 2)  
+
+    # Round to integers
+    a_integers = np.round(a_scaled_samples).astype(int)
+    b_integers = np.round(b_scaled_samples).astype(int)
+
+    # Clip to the desired range
+    a_clipped_integers = np.clip(a_integers, lower_bound, upper_bound)
+    b_clipped_integers = np.clip(b_integers, lower_bound, upper_bound)
+    return a_clipped_integers, b_clipped_integers
+
+async def normal_random_test(tb, nb_iter=1000000):
+
+    a_vals, b_vals = _normal_sample(tb, nb_iter)
+    
+    count = 0
+    idx = 0
+    while count != nb_iter:
+        a = a_vals[idx]
+        b = b_vals[idx]
+        idx += 1
+
+        await apply_values(tb, a, b)
+        
+        count += 1
+
+async def normal_random_shifted1_test(tb, nb_iter=1000000):
+
+    a_vals, b_vals = _normal_sample(tb, nb_iter, mean=1.0)
+    
+    count = 0
+    idx = 0
+    while count != nb_iter:
+        a = a_vals[idx]
+        b = b_vals[idx]
+        idx += 1
+
+        await apply_values(tb, a, b)
+        
+        count += 1
+
+async def inverted_normal_random_test(tb, nb_iter=1000000):
+
+    a_vals, b_vals = _normal_sample(tb, nb_iter, invert=True)
+    
+    count = 0
+    idx = 0
+    while count != nb_iter:
+        a = a_vals[idx]
+        b = b_vals[idx]
+        idx += 1
+
+        await apply_values(tb, a, b)
+        
+        count += 1
+
+async def squeezed_normal_random_test(tb, nb_iter=1000000):
+
+    a_vals, b_vals = _normal_sample(tb, nb_iter, std=0.25)
+    
+    count = 0
+    idx = 0
+    while count != nb_iter:
+        a = a_vals[idx]
+        b = b_vals[idx]
+        idx += 1
+
+        await apply_values(tb, a, b)
+        
+        count += 1
+
+@cocotb.test()  # decorator indicates that this is a test that needs to be run by cocotb.
+async def test1(dut):  # dut is a pointer to the top module. This is built in
+    tb = TestBench(dut, db_filepath="results_sweep_db")  # creating a testbench object for this dut. __init__ function is run automatically
+    
+    await Timer(1)  # pauses current function and lets the simulator run for 1 time step.
+    # duration of each timestep is determined by the parameter #COCOTB_HDL_TIMEPRECISION in the makefile
+
+    tb.dut._log.info("resetting the module") 
+
+    # tb.save_database()
+
+    await tb.cycle_reset()  
+    tb.dut._log.info("out of reset")
+
+$do_tests_list
+    
+    assert True

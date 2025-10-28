@@ -1,0 +1,20 @@
+
+
+module mydesign_comb #(
+    parameter int N_IN = $in_bitwidth, parameter int N_OUT = $out_bitwidth
+  ) (
+    input logic [N_IN-1:0] operand_a_i,
+    output logic [N_OUT-1:0] result_o
+  );
+
+  logic [N_OUT-1:0] out;
+  logic [N_IN-1:0] sel;
+
+  assign sel = operand_a_i;
+
+$look_up_table
+
+  assign result_o = out;
+
+endmodule
+

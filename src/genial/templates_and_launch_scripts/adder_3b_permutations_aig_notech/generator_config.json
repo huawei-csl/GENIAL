@@ -1,0 +1,6 @@
+{
+    "design_type":"adder",
+    "input_bitwidth":"3",
+    "output_bitwidth":"3",
+    "top_synth_instance_name":"mydesign_top"
+}

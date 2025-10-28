@@ -1,0 +1,27 @@
+activation: gelu
+batch_size: 1
+checkpoint_metric: loss/val_loss
+core_type: default
+criterion_type: huber_loss
+d_model: 512
+decoder_type: default
+dim_feedforward: 1024
+dropout: 0.1
+embedding_type: pointnetv2
+encoding_width: 4
+encoding_width_output: 8
+final_layer_type: identity
+lr_scheduler_type: constant_lindec_lr
+mask_type: null
+max_restart_lr: 0.0001
+max_scratch_lr: 0.00025
+max_sequence_length: 272
+nhead: 8
+num_layers: 5
+optimizer_type: soap
+score_rescale_mode: standardize
+score_type: trans
+task:
+- custom_io_encodings
+- ssl
+n_cls_token: 2

@@ -1,0 +1,14 @@
+activation: gelu
+batch_size: 4096
+checkpoint_metric: acc/golden_acc
+d_model: 256
+dim_feedforward: 256
+dropout: 0.1
+encoding_width: 4
+mask_type: none
+max_restart_lr: 0.00025
+max_scratch_lr: 0.0005
+max_sequence_length: 16
+nhead: 8
+num_layers: 5
+score_type: trans

@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: BSD-3-Clause Clear
+# Copyright (c) 2024-2025 HUAWEI.
+# All rights reserved.
+#
+# This software is released under the BSD 3-Clause Clear License.
+# See the LICENSE file in the project root for full license information (https://github.com/huawei-csl/GENIAL).
+
+# print_stats
+# Transforms the current network into an AIG by one-level structural hashing.
+strash
+
+# Recursively composes the fanin nodes into the fanout nodes resulting in a network, in which each CO is produced by a node, whose fanins are CIs.
+# After collapsing, the node functions are represented using BDDs.
+collapse
+
+# Transforms the current network into an AIG by one-level structural hashing.
+strash
+
+# Converts the current network into GIA and moves it to the &-space
+# -n: toggles saving CI/CO names of the AIG 
+&get -n
+
+# Performs fraiging using a new method
+ifraig 
+
+# performs sequential sweep using K-step induction
+# scorr
+
+# Performs combinational AIG optimization
+dc2
+
+# New implementation of min-area
+dretime
+
+# Transforms the current network into an AIG by one-level structural hashing.
+strash
+
+# Converts the current network into GIA and moves it to the &-space
+# -n: toggles saving CI/CO names of the AIG 
+&get -n
+
+# Computes structural choices using a new approach
+&dch -f
+dc2
+
+# Classical sweep applicable to the current logic network resulting in a logic network.
+logic
+sweep 
+strash
+
+# Removes the dangling nodes in the current logic network, that is, the logic nodes that do not fanout into POs and latches.
+# cleanup 
+strash
+
+&get -n
+
+# Standard optimization scripts
+alias rsz resub -z
+alias rs resub
+alias rsz resub -z
+alias resyn3      "b; rs; rs -K 6; b; rsz; rsz -K 6; b; rsz -K 5; b"
+# resyn3
+
+&get -n
+
+# Another standard sript
+alias rw rewrite
+alias rf refactor
+alias rwz rewrite -z
+alias rfz refactor -z
+alias compress2   "b -l; rw -l; rf -l; b -l; rw -l; rwz -l; b -l; rfz -l; rwz -l; b -l"
+# compress2
+
+&get -n
+
+# Lazy man's synthesis
+alias recadd3     "st; rec_add3; b; rec_add3; dc2; rec_add3; if -K 8; bidec; st; rec_add3; dc2; rec_add3; if -g -K 6; st; rec_add3"
+# recadd3
+
+# Performs technology mapping of the network
+&nf {D}
+
+# Transfer the current network into the old ABC
+&put
+

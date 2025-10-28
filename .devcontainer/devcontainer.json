@@ -1,0 +1,49 @@
+{
+  "name": "genial-dev",
+  "build": {
+    "dockerfile": ".devcontainer/docker/Dockerfile",
+    "context": "..",
+    "target": "genial-dev",
+    "args": {
+      "NPROC": "${localEnv:NPROC}",
+      "BASE_IMAGE": "oss-eda-base:latest"
+    }
+  },
+  "workspaceFolder": "/app",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+  "runArgs": ["--init"],
+  // Forward SSH agent from host into the container
+  "mounts": [
+    "source=${env:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+  ],
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  },
+  "remoteUser": "vscode",
+  "initializeCommand": "bash -lc 'if ! docker image inspect oss-eda-base:latest >/dev/null 2>&1; then echo \"Building missing base image oss-eda-base:latest...\"; docker build -f ext/oss_eda_base/Dockerfile -t oss-eda-base:latest --build-arg NPROC=${NPROC:-8} .; fi; echo LOCAL_UID=$(id -u) > .devcontainer/local.env && echo LOCAL_GID=$(id -g) >> .devcontainer/local.env'",
+  // "envFile": [
+  //   ".devcontainer/local.env"
+  // ],
+  // "onCreateCommand": "sudo fix-uid-gid",
+  "containerEnv": {
+    "MPLBACKEND": "Agg",
+    "MPLCONFIGDIR": "/tmp/mplconfig"
+  },
+  "postCreateCommand": "uv pip install -e .",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.cpptools",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.makefile-tools"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/prog/pyenv_eda/bin/python",
+        "python.venvPath": "/prog",
+        "terminal.integrated.shellIntegration.enabled": true
+      }
+    }
+  }
+}

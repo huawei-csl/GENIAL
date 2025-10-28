@@ -1,0 +1,36 @@
+# VCS
+.git
+**/.git
+.gitmodules
+
+# Python envs and caches
+envs/
+.venv/
+venv/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Build artifacts and logs
+dist/
+build/
+output/
+logs/
+*.log
+*.tmp
+
+# OS/editor noise
+.DS_Store
+*.swp
+*~
+
+# Large subtrees not needed for GENIAL overlay build
+ext/oss_eda_base/**
+
+# Keep Flowy sources available for its image build
+!ext/flowy/**
+
+# Keep Dockerfiles and requirements
+!.devcontainer/**
+!requirements.txt
+!requirements_extra.txt

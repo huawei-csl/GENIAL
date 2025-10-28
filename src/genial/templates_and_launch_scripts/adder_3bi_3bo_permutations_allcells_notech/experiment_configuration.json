@@ -1,0 +1,10 @@
+{
+    "design_type":"adder",
+    "input_bitwidth":"3",
+    "output_bitwidth":"3",
+    "input_encoding_type":"twos_comp",
+    "output_encoding_type":"twos_comp",
+    "top_synth_instance_name":"mydesign_top",
+    "do_tests_list":["fullsweep", "normal_random"],
+    "nb_iter":4096
+}

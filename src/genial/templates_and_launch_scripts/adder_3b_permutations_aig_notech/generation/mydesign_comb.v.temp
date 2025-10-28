@@ -1,0 +1,23 @@
+
+
+module mydesign_comb #(
+    parameter int N_IN = 3, parameter N_OUT=3
+  ) (
+    input logic [N_IN-1:0] operand_a_i,
+    input logic [N_IN-1:0] operand_b_i,
+    output logic [N_OUT-1:0] result_o
+  );
+
+  logic [N_OUT-1:0] out;
+  logic [2*N_IN-1:0] sel;
+
+  assign sel[2*N_IN-1:N_IN] = operand_a_i;
+  assign sel[N_IN-1:0] = operand_b_i;
+
+$look_up_table
+
+  assign result_o = out;
+
+endmodule
+
+

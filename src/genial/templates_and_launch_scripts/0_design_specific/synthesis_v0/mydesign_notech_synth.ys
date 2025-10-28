@@ -1,0 +1,38 @@
+
+# https://stackoverflow.com/questions/41948709/combinatorial-synthesis-better-technology-mapping-results
+
+yosys read_verilog ../pickle/mydesign_sv2v.v
+yosys hierarchy -check -top mydesign_top
+yosys proc
+yosys opt
+yosys memory
+yosys opt
+yosys fsm -norecode
+yosys opt
+yosys flatten -noscopeinfo
+yosys opt
+yosys clean -purge
+yosys techmap
+yosys opt
+
+yosys splitnets -ports -format __v
+yosys rename -wire -suffix _reg t:*DFF*
+yosys autoname t:*DFF* %n
+
+# ABC pass
+yosys abc -script scripts/abc.script -D 1000
+yosys opt
+yosys proc
+yosys opt
+yosys clean -purge
+
+# final reports
+file mkdir reports
+yosys tee -q -o "reports/mydesign_synth.rpt" check 
+yosys tee -q -o "reports/mydesign_area_logic.rpt" stat -top mydesign_top -tech cmos
+yosys tee -q -o "reports/mydesign_area_logic.rpt.json" stat -top mydesign_top -tech cmos -json
+
+# final netlist
+file mkdir out
+yosys write_verilog -noattr -noexpr -nohex -nodec out/mydesign_yosys.v
+

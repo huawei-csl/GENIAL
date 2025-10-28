@@ -1,0 +1,23 @@
+activation: gelu
+batch_size: 2048
+checkpoint_metric: loss/val_loss
+core_type: default
+criterion_type: mse_loss
+d_model: 512
+dim_feedforward: 1024
+dropout: 0.1
+embedding_type: pointnetv2
+encoding_width: 4
+final_layer_type: identity
+mask_type: none
+max_restart_lr: 0.00025
+max_scratch_lr: 0.0005
+max_sequence_length: 16
+nhead: 8
+num_layers: 8
+score_rescale_mode: standardize
+score_type: trans
+n_cls_token: 1
+vae_constraint: False
+task:
+  - ssl

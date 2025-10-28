@@ -1,0 +1,50 @@
+
+module mydesign_synth_wrapper #(
+    parameter int N_IN = 8,
+    parameter int N_OUT = 16
+    ) (
+    input logic clk_ci,
+    input logic rst_ni,
+    input logic [N_IN-1:0] operand_a_i,
+    input logic [N_IN-1:0] operand_b_i,
+    output logic [N_OUT-1:0] result_o
+);
+
+mydesign_top i_mydesign_synthesized(
+    .clk_ci(clk_ci),
+    .rst_ni(rst_ni),
+    .operand_a_i_0_(operand_a_i[0]),
+    .operand_a_i_1_(operand_a_i[1]),
+    .operand_a_i_2_(operand_a_i[2]),
+    .operand_a_i_3_(operand_a_i[3]),
+    .operand_a_i_4_(operand_a_i[4]),
+    .operand_a_i_5_(operand_a_i[5]),
+    .operand_a_i_6_(operand_a_i[6]),
+    .operand_a_i_7_(operand_a_i[7]),
+    .operand_b_i_0_(operand_b_i[0]),
+    .operand_b_i_1_(operand_b_i[1]),
+    .operand_b_i_2_(operand_b_i[2]),
+    .operand_b_i_3_(operand_b_i[3]),
+    .operand_b_i_4_(operand_b_i[4]),
+    .operand_b_i_5_(operand_b_i[5]),
+    .operand_b_i_6_(operand_b_i[6]),
+    .operand_b_i_7_(operand_b_i[7]),
+    .result_o_0_(result_o[0]),
+    .result_o_1_(result_o[1]),
+    .result_o_2_(result_o[2]),
+    .result_o_3_(result_o[3]),
+    .result_o_4_(result_o[4]),
+    .result_o_5_(result_o[5]),
+    .result_o_6_(result_o[6]),
+    .result_o_7_(result_o[7]),
+    .result_o_8_(result_o[8]),
+    .result_o_9_(result_o[9]),
+    .result_o_10_(result_o[10]),
+    .result_o_11_(result_o[11]),
+    .result_o_12_(result_o[12]),
+    .result_o_13_(result_o[13]),
+    .result_o_14_(result_o[14]),
+    .result_o_15_(result_o[15])
+    );
+
+endmodule

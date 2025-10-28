@@ -1,0 +1,29 @@
+"experiment_name": "multiplier_4bi_8bo_permuti_flowy"
+"dir_name": "debug_flowy_run_12chains_3000steps"
+"ignore_user_prompts": True
+"nb_workers": 60
+"initial_dataset": null
+"n_iter": 20
+# ----- Training Parameters
+"batch_size_trainer": 4500
+"max_epochs_trainer": 200
+"device": 0
+"nb_init_designs": 100
+"score_type": "swact"
+"use_ssl_model": True
+"trainer_version_number": 0  # Under which version number the training will be saved -- not used for loading
+"ssl_model_checkpoint": "resources/pretrained_model/embedding/117_0.0102_000.ckpt"
+"yml_config_path": "resources/pretrained_model/embedding/model_config.yml"
+# ----- Generation Parameters
+"batch_size_proto": 4500
+"max_epochs_proto": 1500
+"nb_gener_prototypes": 20
+# ----- Launch and analyze parameters
+"synth_only": False
+"cmplx_only": False
+"skip_synth": False
+"skip_swact": False
+"skip_power": True
+"skip_cmplx": False
+"bulk_flow_dirname": "synth_out"
+"technology": null

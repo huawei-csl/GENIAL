@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: BSD-3-Clause Clear
+# Copyright (c) 2024-2025 HUAWEI.
+# All rights reserved.
+#
+# This software is released under the BSD 3-Clause Clear License.
+# See the LICENSE file in the project root for full license information (https://github.com/huawei-csl/GENIAL).
+
+package:
+  name: mydesign_top
+  authors:
+    - "Maxence Bouvier"
+
+# dependencies:
+
+export_include_dirs:
+  - test
+
+sources:
+  # Level 1
+  # - hw/mydesign/hdl/mydesign_top.v
+  - hw/mydesign/hdl/mydesign_comb.v
+  # Level 2
+  # - hw/mydesign/hdl/mydesign_chip.sv
+  - target: ihp130
+    files:
+      - ihp130/tech_cells.sv
+      - ihp130/tc_sram.sv
+  # - target: test
+  #   files:
+  #     - test/<test_file>
+  # - target: verilator_test
+  #   files:
+  #     - test/<test_file>

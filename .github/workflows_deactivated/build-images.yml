@@ -1,0 +1,118 @@
+name: Build Overlay Images
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.devcontainer/docker/**'
+      - 'ext/flowy/**'
+      - '.github/workflows/build-images.yml'
+  pull_request:
+    paths:
+      - '.devcontainer/docker/**'
+      - 'ext/flowy/**'
+      - '.github/workflows/build-images.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-genial:
+    name: Build GENIAL image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull base image
+        run: docker pull ghcr.io/${{ github.repository_owner }}/oss-eda-base:latest
+
+      - name: Build and push GENIAL
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .devcontainer/docker/Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          platforms: linux/amd64
+          build-args: |
+            BASE_IMAGE=ghcr.io/${{ github.repository_owner }}/oss-eda-base:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/genial:latest
+            ghcr.io/${{ github.repository_owner }}/genial:sha-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-flowy:
+    name: Build Flowy image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Check for Flowy project
+        id: flowy_check
+        run: |
+          if [ -f ext/flowy/pyproject.toml ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up QEMU
+        if: steps.flowy_check.outputs.exists == 'true'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        if: steps.flowy_check.outputs.exists == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        if: steps.flowy_check.outputs.exists == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull base image
+        if: steps.flowy_check.outputs.exists == 'true'
+        run: docker pull ghcr.io/${{ github.repository_owner }}/oss-eda-base:latest
+
+      - name: Build and push Flowy
+        if: steps.flowy_check.outputs.exists == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ext/flowy/docker/Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          platforms: linux/amd64
+          build-args: |
+            BASE_IMAGE=ghcr.io/${{ github.repository_owner }}/oss-eda-base:latest
+            NPROC=4
+            FLOWY_PATH=ext/flowy
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/flowy:latest
+            ghcr.io/${{ github.repository_owner }}/flowy:sha-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

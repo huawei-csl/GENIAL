@@ -1,0 +1,11 @@
+{
+    "design_type":"multiplier",
+    "input_bitwidth":"3",
+    "output_bitwidth":"6",
+    "input_encoding_type":"twos_comp",
+    "output_encoding_type":"twos_comp",
+    "top_synth_instance_names":["mydesign_top", "mydesign_comb"],
+    "do_tests_list":["fullsweep"],
+    "nb_iter":4096,
+    "encoder_generation_out_dir":"encoder_3bi-tc_3bo-tc_allcells_notech/2024-07-26_14-49_1f0c5d5"
+}

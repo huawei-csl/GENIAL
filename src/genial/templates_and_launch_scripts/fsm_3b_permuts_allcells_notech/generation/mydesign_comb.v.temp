@@ -1,0 +1,65 @@
+module mydesign_comb(
+    input [$in_bitwidth-1:0] current_state,  // Previous state
+    input [3:0] input_signal,   // Input signal (4 bits)
+    output reg [$in_bitwidth-1:0] next_state, // Next state
+    output reg [1:0] output_signal // Output signal for each state (2 bits)
+);
+
+    // State encodings (localparams)
+$localparams
+
+    // Define LUT for state transitions (mapping state + input to next state)
+    always @(*) begin
+        // Default output state (based on current state)
+        case (current_state)
+            S0: output_signal = 2'b10; // Output for state S0
+            S1: output_signal = 2'b01; // Output for state S1
+            S2: output_signal = 2'b10; // Output for state S2
+            S3: output_signal = 2'b10; // Output for state S3
+            S4: output_signal = 2'b00; // Output for state S4
+            S5: output_signal = 2'b11; // Output for state S5
+            default: output_signal = 2'bxx; // Invalid state
+        endcase
+
+        // Define state transitions based on current state and input using casex
+        casex ({current_state, input_signal})  // Concatenate current_state and input_signal directly
+            {S0, 4'bxxxx} : next_state = S0;  // Transition from state 0 with input xxxx
+            {S1, 4'b0xxx} : next_state = S0;  // Transition from state 1 with input 0xxx
+            {S1, 4'b10xx} : next_state = S4;  // Transition from state 1 with input 10xx
+            {S1, 4'b1100} : next_state = S2;  // Transition from state 1 with input 1100
+            {S1, 4'b1101} : next_state = S2;  // Transition from state 1 with input 1101
+            {S1, 4'b1110} : next_state = S4;  // Transition from state 1 with input 1110
+            {S1, 4'b1111} : next_state = S2;  // Transition from state 1 with input 1111
+            {S2, 4'b011x} : next_state = S4;  // Transition from state 2 with input 011x
+            {S2, 4'b1xx0} : next_state = S5;  // Transition from state 2 with input 1xx0
+            {S2, 4'bx101} : next_state = S3;  // Transition from state 2 with input x101
+            {S2, 4'b0000} : next_state = S0;  // Transition from state 2 with input 0000
+            {S2, 4'b0001} : next_state = S3;  // Transition from state 2 with input 0001
+            {S2, 4'b0010} : next_state = S1;  // Transition from state 2 with input 0010
+            {S2, 4'b0011} : next_state = S1;  // Transition from state 2 with input 0011
+            {S2, 4'b0100} : next_state = S1;  // Transition from state 2 with input 0100
+            {S2, 4'b1001} : next_state = S4;  // Transition from state 2 with input 1001
+            {S2, 4'b1011} : next_state = S4;  // Transition from state 2 with input 1011
+            {S2, 4'b1111} : next_state = S2;  // Transition from state 2 with input 1111
+            {S3, 4'b010x} : next_state = S2;  // Transition from state 3 with input 010x
+            {S3, 4'b000x} : next_state = S2;  // Transition from state 3 with input 000x
+            {S3, 4'b0x11} : next_state = S0;  // Transition from state 3 with input 0x11
+            {S3, 4'b1x1x} : next_state = S2;  // Transition from state 3 with input 1x1x
+            {S3, 4'b0010} : next_state = S5;  // Transition from state 3 with input 0010
+            {S3, 4'b0110} : next_state = S5;  // Transition from state 3 with input 0110
+            {S3, 4'b1000} : next_state = S5;  // Transition from state 3 with input 1000
+            {S3, 4'b1001} : next_state = S2;  // Transition from state 3 with input 1001
+            {S3, 4'b1100} : next_state = S2;  // Transition from state 3 with input 1100
+            {S3, 4'b1101} : next_state = S4;  // Transition from state 3 with input 1101
+            {S4, 4'bxxxx} : next_state = S3;  // Transition from state 4 with input xxxx
+            {S5, 4'bx01x} : next_state = S3;  // Transition from state 5 with input x01x
+            {S5, 4'bx1xx} : next_state = S0;  // Transition from state 5 with input x1xx
+            {S5, 4'b000x} : next_state = S0;  // Transition from state 5 with input 000x
+            {S5, 4'b1000} : next_state = S1;  // Transition from state 5 with input 1000
+            {S5, 4'b1001} : next_state = S5;  // Transition from state 5 with input 1001
+
+            default: next_state = S0; // Default case, invalid state
+        endcase
+    end
+
+endmodule

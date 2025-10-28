@@ -1,0 +1,50 @@
+
+# https://stackoverflow.com/questions/41948709/combinatorial-synthesis-better-technology-mapping-results
+
+# Open synthesized design
+yosys read_verilog ../pickle/mydesign_sv2v.v
+yosys hierarchy -check -top mydesign_top
+yosys tee -q -o "reports/mydesign_synth_step_3.1.rpt" stat -top mydesign_top -tech cmos
+yosys flatten -noscopeinfo
+yosys stat
+yosys tee -q -o "reports/mydesign_synth_step_3.2.rpt" stat -top mydesign_top -tech cmos
+
+yosys synth -noabc
+# yosys proc
+# yosys opt
+# yosys techmap
+
+yosys stat
+yosys tee -q -o "reports/mydesign_synth_step_2.rpt" stat -top mydesign_top -tech cmos
+
+yosys splitnets -ports -format __v
+yosys rename -wire -suffix _reg t:*DFF*
+yosys autoname t:*DFF* %n
+yosys opt
+
+# ABC pass
+yosys abc
+yosys abc -script scripts/abc-opt-v2.script -D 1000
+yosys abc
+yosys clean -purge
+yosys opt
+
+# final reports
+file mkdir reports
+yosys tee -q -o "reports/mydesign_synth_step_4.rpt" stat -top mydesign_top -tech cmos
+yosys tee -q -o "reports/mydesign_synth.rpt" check 
+yosys tee -q -o "reports/mydesign_area_logic.rpt" stat -top mydesign_top -tech cmos
+yosys tee -q -o "reports/mydesign_area_logic.rpt.json" stat -top mydesign_top -tech cmos -json
+
+# final netlist
+yosys write_verilog -noattr -noexpr -nohex -nodec out/mydesign_yosys.v
+
+# visualize results
+# yosys select mydesign_top
+# yosys show -colors -width -long -prefix out/mydesign_visualize -format png
+
+yosys stat -tech cmos
+
+set path [file tail [pwd]]
+puts "Synthesized file written to $path/out/mydesign_yosys.v"
+puts " "

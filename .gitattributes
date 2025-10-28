@@ -1,0 +1,4 @@
+/home/mbouvier/proj/genial_huawei/src/genial/templates_and_launch_scripts/0_defaults/power_extraction_v0/default.tar.gz !text !filter !merge !diff
+/home/mbouvier/proj/genial_huawei/resources/pretrained_model/embedding/117_0.0102_000.ckpt !text !filter !merge !diff
+resources/pretrained_model/embedding/117_0.0102_000.ckpt !text !filter !merge !diff
+*.tar.gz !text !filter !merge !diff

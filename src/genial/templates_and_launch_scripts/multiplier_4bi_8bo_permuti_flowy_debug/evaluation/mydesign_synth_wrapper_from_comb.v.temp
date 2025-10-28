@@ -1,0 +1,67 @@
+
+module mydesign_synth_wrapper #(
+    parameter int N_IN = 4,
+    parameter int N_OUT = 8
+    ) (
+    input logic clk_ci,
+    input logic rst_ni,
+    input logic [N_IN-1:0] operand_a_i,
+    input logic [N_IN-1:0] operand_b_i,
+    output logic [N_OUT-1:0] result_o
+);
+
+mydesign_top i_mydesign_synthesized(
+      .clk_ci(clk_ci),
+      .rst_ni(rst_ni),
+      .operand_a_i(operand_a_i),
+      .operand_b_i(operand_b_i),
+      .result_o(result_o)
+);
+
+endmodule
+
+module mydesign_top #(
+    parameter int N_IN = 4,
+    parameter int N_OUT = 8
+  ) (
+    input logic clk_ci,
+    input logic rst_ni,
+    input logic [N_IN-1:0] operand_a_i,
+    input logic [N_IN-1:0] operand_b_i,
+    output logic [N_OUT-1:0] result_o
+);
+
+logic [N_OUT-1:0] result_d;
+logic [N_OUT-1:0] result_q;
+
+(* dont_touch = "true" *) mydesign_comb #(
+) i_mydesign_comb (
+  .operand_a_i_0_(operand_a_i[0]),
+  .operand_a_i_1_(operand_a_i[1]),
+  .operand_a_i_2_(operand_a_i[2]),
+  .operand_a_i_3_(operand_a_i[3]),
+  .operand_b_i_0_(operand_b_i[0]),
+  .operand_b_i_1_(operand_b_i[1]),
+  .operand_b_i_2_(operand_b_i[2]),
+  .operand_b_i_3_(operand_b_i[3]),
+  .result_o_0_(result_d[0]),
+  .result_o_1_(result_d[1]),
+  .result_o_2_(result_d[2]),
+  .result_o_3_(result_d[3]),
+  .result_o_4_(result_d[4]),
+  .result_o_5_(result_d[5]),
+  .result_o_6_(result_d[6]),
+  .result_o_7_(result_d[7])
+);
+
+always_ff @(posedge clk_ci, negedge rst_ni) begin
+  if (~rst_ni) begin
+    result_q <= 0;
+  end else begin
+    result_q <= result_d;
+  end
+end
+
+assign result_o = result_q;
+
+endmodule

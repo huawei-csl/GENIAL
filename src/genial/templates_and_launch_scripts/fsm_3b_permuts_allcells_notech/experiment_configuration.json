@@ -1,0 +1,10 @@
+{
+    "design_type":"fsm",
+    "input_bitwidth":"3",
+    "output_bitwidth":"3",
+    "input_encoding_type":"unsigned_int",
+    "output_encoding_type":"unsigned_int",
+    "top_synth_instance_names":["mydesign_top", "mydesign_comb"],
+    "do_tests_list":[],
+    "nb_iter":0
+}
