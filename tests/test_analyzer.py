@@ -175,6 +175,69 @@ def test_analyzer_database_initialization(env_and_paths):
         sys.argv = original_argv
 
 
+def test_analyzer_with_mock_synth_data(env_and_paths):
+    """Test that Analyzer can process synthesis outputs when they exist."""
+    from genial.experiment.task_analyzer import Analyzer
+    from genial.config.config_dir import ConfigDir
+
+    exp = env_and_paths["experiment_name"]
+    out_dir = "pytest_mock_synth"
+    root = env_and_paths["WORK_DIR"] / "output" / exp / out_dir
+
+    # Create mock synthesis output structure
+    synth_out = root / "synth_out"
+    gen_out = root / "generation_out"
+    analysis_out = root / "analysis_out"
+
+    for directory in [synth_out, gen_out, analysis_out]:
+        directory.mkdir(parents=True, exist_ok=True)
+
+    # Create a mock design directory with minimal synthesis output
+    design_dir = synth_out / "res_0001"
+    design_dir.mkdir(parents=True, exist_ok=True)
+
+    # Create a minimal synthesis report (this is what the analyzer looks for)
+    report_file = design_dir / "synthesis_report.txt"
+    report_file.write_text("""
+Area report:
+Total cells: 42
+""")
+
+    # Create matching generation output
+    gen_design_dir = gen_out / "res_0001"
+    (gen_design_dir / "hdl").mkdir(parents=True, exist_ok=True)
+    (gen_design_dir / "encoding.json").write_text('{"in_enc_dict": {}, "out_enc_dict": {}}')
+
+    original_argv = sys.argv.copy()
+
+    try:
+        sys.argv = [
+            "task_analyzer.py",
+            "--experiment_name",
+            exp,
+            "--output_dir_name",
+            out_dir,
+            "--rebuild_db",
+            "--ignore_user_prompts",
+            "--skip_swact",
+            "--skip_power",
+            "--skip_cmplx",
+        ]
+
+        dir_config = ConfigDir(is_analysis=True)
+        analyzer = Analyzer(dir_config=dir_config, skip_log_init=True)
+
+        # Check that analyzer found the mock synth output
+        assert analyzer.analysis_out_dir.exists()
+
+        # Try to get encodings (should work with mock data)
+        analyzer.get_all_design_encodings()
+        assert hasattr(analyzer, "gener_df")
+
+    finally:
+        sys.argv = original_argv
+
+
 def test_analyzer_end_to_end_synth_only(env_and_paths):
     env = os.environ.copy()
     exp = env_and_paths["experiment_name"]
@@ -217,7 +280,9 @@ def test_analyzer_end_to_end_synth_only(env_and_paths):
 
         root = work_dir / "output" / exp / out_dir
         gen_out = root / "generation_out"
-        assert gen_out.exists() and any(gen_out.glob("res_*/hdl/*"))
+        assert gen_out.exists() and any(gen_out.glob("res_*/hdl/*")), (
+            f"Generation output not found. Contents: {list(root.iterdir()) if root.exists() else 'root does not exist'}"
+        )
 
         # 2) Launch synthesis only
         proc = run(
@@ -239,6 +304,12 @@ def test_analyzer_end_to_end_synth_only(env_and_paths):
         )
         assert proc.returncode == 0, f"LAUNCH FAIL\n{proc.stderr}\n{proc.stdout}"
 
+        # Check synthesis outputs exist
+        synth_out = root / "synth_out"
+        assert synth_out.exists(), f"Synthesis output directory not found at {synth_out}"
+        synth_designs = list(synth_out.glob("res_*"))
+        assert len(synth_designs) > 0, f"No synthesized designs found in {synth_out}"
+
         # 3) Analyze synth only
         proc = run(
             [
@@ -259,9 +330,24 @@ def test_analyzer_end_to_end_synth_only(env_and_paths):
             ],
             env=env,
         )
+
+        # Print analyzer output for debugging
+        if proc.returncode != 0:
+            print(f"ANALYZER STDERR:\n{proc.stderr}")
+            print(f"ANALYZER STDOUT:\n{proc.stdout}")
         assert proc.returncode == 0, f"ANALYZE FAIL\n{proc.stderr}\n{proc.stdout}"
 
+        # Check what files were created
+        analysis_out = root / "analysis_out"
+        assert analysis_out.exists(), f"Analysis output directory not found at {analysis_out}"
+
+        created_files = list(analysis_out.glob("*"))
+        print(f"\nFiles created in analysis_out: {[f.name for f in created_files]}")
+
+        # Print analyzer stdout to see what happened
+        print(f"\nAnalyzer output:\n{proc.stdout[-2000:]}")  # Last 2000 chars
+
         synth_db = root / "analysis_out" / "synth_analysis.db.pqt"
-        assert synth_db.exists(), "synth_analysis.db.pqt not found"
+        assert synth_db.exists(), f"synth_analysis.db.pqt not found. Created files: {[f.name for f in created_files]}"
     finally:
         config_path.write_text(original_cfg_text)
