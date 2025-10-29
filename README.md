@@ -127,9 +127,11 @@ If it's the first time you install uv, you'll have to restart your shell.
 ### 3. Install GENIAL as a package
 
 ```bash
-# [Optional] for fresh ubuntu installs:
+# 0. For fresh ubuntu installs [Optional]:
 # sudo apt-get update
 # sudo apt-get install -y build-essential gcc g++ make
+
+# 1. Install GENIAL with dev dependencies:
 uv pip install -e .
 ```
 
@@ -142,8 +144,10 @@ We recommend reading it in the order suggested as in the [usage documentation](#
 You can also read the [GENIAL paper](https://arxiv.org/abs/2507.18989) to get a better idea of what this repository will enable you to do.
 
 ```bash
-./.devcontainer/docker/build_dockers.sh --build-base
+./.devcontainer/docker/build_dockers.sh --build-base [--no-download]
 ```
+
+The `--no-download` flag can be used to force the oss_eda_base docker image to be built from scratch instead of downloading the pre-built one.
 
 ### 5. (Optional) Enable pre-commit hooks
 

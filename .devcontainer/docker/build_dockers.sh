@@ -113,14 +113,38 @@ ver_flowy="$(read_version "${ROOT_DIR}/ext/flowy/.docker_image_version")"
 # Acquire base image (pull by default; never auto-build)
 #############################################
 if [[ "$DOWNLOAD" == true ]]; then
-  # Login if CR_PAT is available (optional; public pulls don't need it)
+  # Login to ghcr.io using gh CLI or CR_PAT
+  login_successful=false
+
   if [[ -n "${CR_PAT:-}" ]]; then
-    echo "$CR_PAT" | docker login ghcr.io -u "$GHCR_USER" --password-stdin >/dev/null
+    # Use CR_PAT if explicitly provided
+    echo "[auth] Using CR_PAT for authentication..."
+    if echo "$CR_PAT" | docker login ghcr.io -u "$GHCR_USER" --password-stdin >/dev/null 2>&1; then
+      login_successful=true
+    fi
+  elif command -v gh >/dev/null 2>&1; then
+    # Try to use gh CLI authentication
+    if gh auth status >/dev/null 2>&1; then
+      echo "[auth] Using GitHub CLI (gh) authentication..."
+      if gh auth token | docker login ghcr.io -u "$GHCR_USER" --password-stdin >/dev/null 2>&1; then
+        login_successful=true
+      fi
+    else
+      echo "[auth] GitHub CLI (gh) is not authenticated." >&2
+      echo "[auth] Please run: gh auth login" >&2
+      echo "[auth] Then try again." >&2
+      exit 1
+    fi
+  else
+    echo "[auth] No authentication method available." >&2
+    echo "[auth] Please install GitHub CLI and run: gh auth login" >&2
+    echo "[auth] Or set the CR_PAT environment variable." >&2
+    echo "[auth] Attempting pull without authentication (may fail for private images)..." >&2
   fi
 
   ghcr_base="ghcr.io/${GHCR_ORG}/oss_eda_base:${ver_base}"
   echo "[base] Pulling $ghcr_base ..."
-  if docker pull "$ghcr_base" >/dev/null 2>&1; then
+  if docker pull "$ghcr_base"; then
     docker tag "$ghcr_base" "$BASE_IMAGE_TAG"
     docker tag "$ghcr_base" "oss_eda_base:${ver_base}" || true
     echo "[base] Pulled: $ghcr_base -> $BASE_IMAGE_TAG"
@@ -166,21 +190,27 @@ have_flowy=false
 if [[ "$DOWNLOAD" == true ]]; then
   if [[ -n "$ver_root" ]]; then
     ghcr_genial="ghcr.io/${GHCR_ORG}/genial:${ver_root}"
-    if docker pull "$ghcr_genial" >/dev/null 2>&1; then
+    echo "[download] Attempting to pull genial: $ghcr_genial ..."
+    if docker pull "$ghcr_genial"; then
       have_genial=true
       docker tag "$ghcr_genial" "genial:latest"
       docker tag "$ghcr_genial" "genial:${ver_root}" || true
       echo "[download] Pulled genial: $ghcr_genial -> genial:latest"
+    else
+      echo "[download] Could not pull genial overlay (will build locally)"
     fi
   fi
 
   if [[ -n "$ver_flowy" ]]; then
     ghcr_flowy="ghcr.io/${GHCR_ORG}/flowy:${ver_flowy}"
-    if docker pull "$ghcr_flowy" >/dev/null 2>&1; then
+    echo "[download] Attempting to pull flowy: $ghcr_flowy ..."
+    if docker pull "$ghcr_flowy"; then
       have_flowy=true
       docker tag "$ghcr_flowy" "flowy:latest"
       docker tag "$ghcr_flowy" "flowy:${ver_flowy}" || true
       echo "[download] Pulled flowy: $ghcr_flowy -> flowy:latest"
+    else
+      echo "[download] Could not pull flowy overlay (will build locally)"
     fi
   fi
 fi
