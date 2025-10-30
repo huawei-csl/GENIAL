@@ -1,7 +1,7 @@
 
 <div align="center">
 
-# GENIAL — Design Generation From Encodings
+# GENIAL — Generative Design Space Exploration via Network Inversion for Low Power Algorithmic Logic Units
 
 [![Python](https://img.shields.io/badge/python-3.13-blue)](pyproject.toml)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause--Clear-blue)](LICENSE)
@@ -19,21 +19,20 @@
 - 📊 Analyze results and train encoding recommenders
 
 
-<div align="center">
-  <img src="docs/images/genial_overview.png" alt="GENIAL Framework Overview" width="50%" style="max-width: 960px;">
-</div>
-
-
-> 🔬 GENIAL results from a study on generative encoding for low-activity logic led at the Huawei Von Neumann Research Center in Zurich, Switzerland. 
+> 🔬 GENIAL was built for leading research on generative encoding for low-activity logic, at the Huawei Von Neumann Research Center in Zurich in Switzerland. 
 > 📖 You can find the related article at the following link:
 >
 > [GENIAL: Generative Design Space Exploration via Network Inversion for Low Power Algorithmic Logic Units (arXiv:2507.18989)](https://arxiv.org/abs/2507.18989)
 > 
-> If you use GENIAL in work, please cite it 🙏
+> If you use GENIAL in work, please give us a star ⭐, and cite it! Thank you, and enjoy!
+
+<div align="center">
+  <img src="docs/images/genial_overview.png" alt="GENIAL Framework Overview" width="30%" style="max-width: 700px;">
+</div>
 
 
 ## 🏁 Table of Content
-- [GENIAL — Design Generation From Encodings](#genial--design-generation-from-encodings)
+- [GENIAL — Generative Design Space Exploration via Network Inversion for Low Power Algorithmic Logic Units](#genial--generative-design-space-exploration-via-network-inversion-for-low-power-algorithmic-logic-units)
   - [🏁 Table of Content](#-table-of-content)
   - [🔍 Available Features](#-available-features)
   - [⚙️ Pipeline](#️-pipeline)
