@@ -142,6 +142,10 @@ If it's the first time you install uv, you'll have to restart your shell.
 
 # 1. Install GENIAL with dev dependencies:
 uv pip install -e .
+
+# 2. [Optional] If you have access to flowy:
+# uv pip install -e ext/flowy
+
 ```
 
 ### 4. Build Docker images
