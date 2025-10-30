@@ -1,4 +1,4 @@
-"experiment_name": "multiplier_4bi_8bo_permuti_flowy_transistors_swact"
+"experiment_name": "multiplier_4bi_8bo_permuti_flowy"
 "dir_name": "standard_flowy_with_sinkhorn"
 "ignore_user_prompts": True
 "nb_workers": 60
@@ -27,4 +27,3 @@
 "skip_cmplx": False
 "bulk_flow_dirname": "synth_out"
 "technology": null
-/117_0.0102_000.ckpt
