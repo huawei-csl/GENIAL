@@ -195,12 +195,12 @@ python -m genial.experiment.task_launcher \
 
 ---
 
-## 📚 Detailed Setup Documentation
+## 📚 Documentation
+
+Here, you will find all you need to understand how to use GENIAL, module by module.
+We highly recommend to have a look at the different READMEs to find useful commands and what GENIAL can do for you.
 
 * [Setup](docs/setup.md)
-
-## 📚 Usage Documentation
-
 * [Launcher](docs/launcher.md)
 * [Analyzer](docs/analyzer.md)
 * [Training](docs/training.md)
