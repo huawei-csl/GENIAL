@@ -93,12 +93,13 @@ flowchart LR
 ### 0. Clone the repo and its submodules
 
 ```bash
+# 1. Clone the repository without its submodules
 git clone https://github.com/huawei-csl/genial.git
 
-# Or initialize submodules manually:
+# 2. Initialize submodules manually:
 git -c submodule.ext/flowy.update=none submodule update --init --recursive
 ```
-> *Note:* for now, Flowy is not yet open-source. We thus specifically avoid cloning.
+> *Note:* for now, Flowy is not yet open-source. We thus specifically avoid cloning it.
 
 ### 1. Configure environment
 
