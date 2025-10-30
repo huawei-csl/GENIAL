@@ -51,6 +51,7 @@
   - [📚 Documentation](#-documentation)
   - [📖 Citation](#-citation)
   - [🙏 Acknowledgements](#-acknowledgements)
+  - [⚖️ Legal](#️-legal)
   - [🎡 Interdependency Graph](#-interdependency-graph)
   - [🤝 Contributing](#-contributing)
 
@@ -113,7 +114,7 @@ Copy and edit your `.env`:
 
 ```bash
 cp .env.template .env
-# Then edit: set SRC_DIR, WORK_DIR, GL_TOKEN
+# Then edit: set SRC_DIR, WORK_DIR
 ```
 
 Get the pre-trained weights from the release files and put them in the resources:
@@ -246,10 +247,17 @@ GENIAL builds upon a vibrant open-source ecosystem, all licenses and copyright n
 
 ---
 
+## ⚖️ Legal
+
+- GENIAL is distributed under the [BSD 3-Clause Clear License](LICENSE).
+- Third-party components bundled or referenced by the project remain under their respective licenses; ensure you review and honor those requirements.
+
+---
+
 ## 🎡 Interdependency Graph
 The following graph shows the dependencies between the different repositories used for running the full flow.
 
-➡️ **Note:** The `flowy` branch is optional but *highly recommended* for obtaining the best results.
+➡️ **Note:** The `flowy` submodule is optional and not available yet.
 
 ```mermaid
 graph TD
@@ -266,11 +274,11 @@ graph TD
   Flowy --> OSSBase
   Flowy --> Mockturtle
 
-  click GENIAL "https://github.com/<org>/genial" _blank
-  click Flowy "https://github.com/<org>/flowy" _blank
-  click OSSBase "https://github.com/<org>/oss_eda_base" _blank
-  click OSSFlow "https://github.com/<org>/oss_eda_flowscripts" _blank
-  click Mockturtle "https://github.com/<org>/mockturtle" _blank
+  click GENIAL "https://github.com/huawei-csl/GENIAL" _blank
+  click Flowy "https://github.com/huawei-csl/FLOWY" _blank
+  click OSSBase "https://github.com/huawei-csl/oss_eda_base" _blank
+  click OSSFlow "https://github.com/huawei-csl/oss_eda_flowscripts" _blank
+  click Mockturtle "https://github.com/huawei-csl/mockturtle" _blank
 ```
 
 ## 🤝 Contributing
