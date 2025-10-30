@@ -27,7 +27,7 @@
 > If you use GENIAL in work, please give us a star ⭐, and cite it! Thank you, and enjoy!
 
 <div align="center">
-  <img src="docs/images/genial_overview.png" alt="GENIAL Framework Overview" width="30%" style="max-width: 700px;">
+  <img src="docs/images/genial_overview.png" alt="GENIAL Framework Overview" style="max-width: 1200px;">
 </div>
 
 
