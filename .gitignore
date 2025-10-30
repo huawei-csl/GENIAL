@@ -202,3 +202,5 @@ launch.json
 *.ckpt
 
 resources/pretrained_model/embedding/117_0.0102_000.ckpt
+
+infinite_echo*

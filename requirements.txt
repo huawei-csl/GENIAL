@@ -23,5 +23,5 @@ pytest-json-report>=1.5.0
 pytest-dependency>=0.6.0
 pytest-order
 dotenv>=0.9.9
-# flowy
+flowy
 swact

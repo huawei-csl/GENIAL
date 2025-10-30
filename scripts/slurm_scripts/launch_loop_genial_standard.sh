@@ -19,4 +19,7 @@ source $HOME/proj/genial/envs/313_genial/bin/activate
 
 # Launch Python command
 # First launch:
-python /home/$USER/proj/genial/scripts/loop_scripts/full_run_v2.py --is_slurm --config_filepath /home/$USER/proj/genial/scripts/loop_scripts/configs/flowy_loop_standard_emb.yaml --delete_merge_dirs --skip_init_gener
+python /home/$USER/proj/genial/src/genial/loop/full_run_v2.py --is_slurm --config_filepath /home/$USER/proj/genial/scripts/loop_scripts/configs/flowy_loop_standard_emb.yaml --delete_merge_dirs --do_init_gener_n_launch --skip_init_gener
+
+# Restart:
+# python /home/$USER/proj/genial/src/genial/loop/full_run_v2.py --is_slurm --config_filepath /home/$USER/proj/genial/scripts/loop_scripts/configs/flowy_loop_standard_emb.yaml --delete_merge_dirs 

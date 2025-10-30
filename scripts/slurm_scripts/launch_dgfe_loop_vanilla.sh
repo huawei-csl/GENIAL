@@ -14,8 +14,8 @@ cd $SRC_DIR
 # Activate Python Environment
 # set -a
 source .env
-source $HOME/envs/312_global/bin/activate
+source $HOME/proj/genial/envs/313_genial/bin/activate
 # set +a
 
 # Launch Python command
-python $SRC_DIR/scripts/loop_scripts/full_run_v2.py --is_slurm --config_filepath $SRC_DIR/scripts/loop_scripts/configs/flowy_loop_default.yaml
+python /home/$USER/proj/genial/src/genial/loop/full_run_v2.py --is_slurm --config_filepath $SRC_DIR/scripts/loop_scripts/configs/flowy_loop_default.yaml

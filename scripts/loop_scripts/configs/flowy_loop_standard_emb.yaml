@@ -3,21 +3,21 @@
 "ignore_user_prompts": True
 "nb_workers": 60
 "initial_dataset": "standard_flowy_with_sinkhorn_gen_iter0"
-"n_iter": 20
+"n_iter": 2
 # ----- Training Parameters
-"batch_size_trainer": 4500
-"max_epochs_trainer": 1500
+"batch_size_trainer": 150
+"max_epochs_trainer": 10
 "device": 0
-"nb_init_designs": 10000
+"nb_init_designs": 10
 "score_type": "swact"
 "use_ssl_model": True
 "trainer_version_number": 0  # Under which version number the training will be saved -- not used for loading
 "yml_config_path": "resources/pretrained_model/embedding/model_config.yml"
 "ssl_model_checkpoint": "resources/pretrained_model/embedding/117_0.0102_000.ckpt"
 # ----- Generation Parameters
-"batch_size_proto": 4000
-"max_epochs_proto": 1500
-"nb_gener_prototypes": 4000
+"batch_size_proto": 150
+"max_epochs_proto": 200
+"nb_gener_prototypes": 10
 # ----- Launch and analyze parameters
 "synth_only": False
 "cmplx_only": False

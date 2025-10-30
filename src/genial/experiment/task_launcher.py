@@ -294,13 +294,15 @@ class Launcher(LoopModule):
         """
 
         # Run the container with command to execute the program
+        print(["bash", "-c", cmd])
         container = client.containers.run(
             image=image_name,
             volumes=volumes,
             user="root",  # Run as root to have permissions in /app and /prog
             name=container_name,
             working_dir="/app",
-            command=["bash", "-c", cmd],
+            # command=["bash", "-c", cmd],
+            command=["sleep", "infinity"],
             remove=True,
         )
 

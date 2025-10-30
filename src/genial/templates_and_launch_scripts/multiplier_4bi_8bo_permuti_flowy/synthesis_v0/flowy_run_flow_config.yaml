@@ -3,9 +3,9 @@ encoding_permutation_id: 0
 bitwidth_input: 4
 iterations: 1
 chains: 1
-chain_len: 3000
+chain_len: 5
 chain_workers: 1
-nb_runs: 12
+nb_runs: 2
 env_option: "auto"
 experiment: "genial"
 verbose: False
@@ -17,7 +17,7 @@ verilog_file: null
 temperature: null
 device_nb: null
 selection_metric: "mockturtle_gates"
-n_best_select: 5
+n_best_select: 2
 scripts_per_step: 1
 compression_scripts_per_step: 3
 skip_intermediate_metrics_extraction: True
@@ -32,7 +32,7 @@ simulation_tb: False
 simulation_tb_final: True
 simulation_tb_save_all: False
 tb_params_sim_mode: "normal_random"
-tb_params_nb_iter: 20000
+tb_params_nb_iter: 100
 tb_params_std: 3.0
 tb_params_mean: 0.0
 tb_params_start_idx: 0
