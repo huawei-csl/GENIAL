@@ -18,39 +18,46 @@
 - 🔋 Extract power using OpenROAD/OpenSTA
 - 📊 Analyze results and train encoding recommenders
 
-> 🔬 GENIAL supports the GENIAL study on generative encoding for low-activity logic.  
-> 📖 If you use GENIAL in academic work, please cite:
+
+<div align="center">
+  <img src="docs/images/genial_overview.png" alt="GENIAL Framework Overview" width="50%" style="max-width: 960px;">
+</div>
+
+
+> 🔬 GENIAL results from a study on generative encoding for low-activity logic led at the Huawei Von Neumann Research Center in Zurich, Switzerland. 
+> 📖 You can find the related article at the following link:
 >
 > [GENIAL: Generative Design Space Exploration via Network Inversion for Low Power Algorithmic Logic Units (arXiv:2507.18989)](https://arxiv.org/abs/2507.18989)
+> 
+> If you use GENIAL in work, please cite it 🙏
 
 
 ## 🏁 Table of Content
 - [GENIAL — Design Generation From Encodings](#genial--design-generation-from-encodings)
-  - [🔍 Overview](#-overview)
+  - [🏁 Table of Content](#-table-of-content)
+  - [🔍 Available Features](#-available-features)
   - [⚙️ Pipeline](#️-pipeline)
   - [✨ Key Features](#-key-features)
   - [🚀 Quick Start](#-quick-start)
-    - [0. Clone the repo with submodules](#0-clone-the-repo-with-submodules)
+    - [0. Clone the repo and its submodules](#0-clone-the-repo-and-its-submodules)
     - [1. Configure environment](#1-configure-environment)
     - [2. Set up Python environment with `uv`](#2-set-up-python-environment-with-uv)
     - [3. Install GENIAL as a package](#3-install-genial-as-a-package)
     - [4. Build Docker images](#4-build-docker-images)
-    - [5. (Optional) Enable pre-commit hooks](#5-optional-enable-pre-commit-hooks)
+    - [5. \[Developper\] Enable pre-commit hooks](#5-developper-enable-pre-commit-hooks)
   - [🧪 Examples](#-examples)
     - [Generate 1 design (no synthesis/simulation):](#generate-1-design-no-synthesissimulation)
     - [Run a minimal end‑to‑end loop (debug mode):](#run-a-minimal-endtoend-loop-debug-mode)
   - [🗂️ Repository Structure](#️-repository-structure)
-  - [📚 Detailed Setup Documentation](#-detailed-setup-documentation)
-  - [📚 Usage Documentation](#-usage-documentation)
+  - [📚 Documentation](#-documentation)
   - [📖 Citation](#-citation)
   - [🙏 Acknowledgements](#-acknowledgements)
-  - [Interdependency Graph](#interdependency-graph)
+  - [🎡 Interdependency Graph](#-interdependency-graph)
   - [🤝 Contributing](#-contributing)
-  - [⚖️ License](#️-license)
 
 ---
 
-## 🔍 Overview
+## 🔍 Available Features
 
 - **Design families:** Adders, multipliers, encoders, decoders, FSMs
 - **Encoding schemes:** Two’s complement, unsigned, mixed, one-hot, permuted, etc.
@@ -151,7 +158,7 @@ You can also read the [GENIAL paper](https://arxiv.org/abs/2507.18989) to get a 
 
 The `--no-download` flag can be used to force the oss_eda_base docker image to be built from scratch instead of downloading the pre-built one.
 
-### 5. (Optional) Enable pre-commit hooks
+### 5. [Developper] Enable pre-commit hooks
 
 ```bash
 pre-commit install
