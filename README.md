@@ -253,7 +253,7 @@ GENIAL builds upon a vibrant open-source ecosystem, all licenses and copyright n
 
 ## ⚖️ Legal
 
-- GENIAL is distributed under the [BSD 3-Clause Clear License](LICENSE).
+- GENIAL is distributed under the [BSD 3-Clause Clear License](./LICENSE).
 - Third-party components bundled or referenced by the project remain under their respective licenses; ensure you review and honor those requirements.
 
 ---
