@@ -7,6 +7,7 @@ set -euo pipefail
 BUILD_BASE=false          # hidden feature: only effective with --no-download
 INSPECT_CONTEXT=false
 DOWNLOAD=true
+SEQUENTIAL=false          # limit parallelism for low-resource machines
 
 for arg in "$@"; do
   case "$arg" in
@@ -18,15 +19,21 @@ for arg in "$@"; do
       DOWNLOAD=true ;;
     --no-download)
       DOWNLOAD=false ;;
+    --sequential|-s)
+      SEQUENTIAL=true ;;
     # hidden/undocumented switch:
     -B|--build-base)
       BUILD_BASE=true ;;
     -h|--help)
-      echo "Usage: $0 [--view-context] [--no-inspect-context] [--download] [--no-download]" >&2
+      echo "Usage: $0 [--view-context] [--no-inspect-context] [--download] [--no-download] [--sequential|-s]" >&2
+      echo "" >&2
+      echo "Options:" >&2
+      echo "  --sequential, -s    Limit parallelism for machines with limited resources" >&2
+      echo "                      (useful for WSL or systems with few CPU cores)" >&2
       exit 0 ;;
     *)
       echo "Unknown argument: $arg" >&2
-      echo "Usage: $0 [--view-context] [--no-inspect-context] [--download] [--no-download]" >&2
+      echo "Usage: $0 [--view-context] [--no-inspect-context] [--download] [--no-download] [--sequential|-s]" >&2
       exit 1 ;;
   esac
 done
@@ -35,7 +42,19 @@ done
 source .env || true
 
 ROOT_DIR="${SRC_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
-NPROC_ARG="${NPROC:-$(nproc)}"
+
+# Determine NPROC based on sequential flag
+if [[ "$SEQUENTIAL" == true ]]; then
+  # Use only 1-2 cores for sequential builds to avoid overwhelming the system
+  NPROC_ARG="${NPROC:-2}"
+  echo "[info] Sequential mode enabled: limiting parallelism to ${NPROC_ARG} cores"
+  # Set BuildKit to use limited parallelism
+  export DOCKER_BUILDKIT=1
+  BUILDKIT_OPTS="--build-arg BUILDKIT_INLINE_CACHE=1"
+else
+  NPROC_ARG="${NPROC:-$(nproc)}"
+  BUILDKIT_OPTS=""
+fi
 
 # Local canonical base tag that overlays will use
 BASE_IMAGE_TAG="${BASE_IMAGE:-oss_eda_base:latest}"
@@ -162,6 +181,7 @@ else
     echo "[base] Building local base image at ${ROOT_DIR}/ext/oss_eda_base ..."
     docker build \
       --build-arg NPROC="${NPROC_ARG}" \
+      ${BUILDKIT_OPTS} \
       -f "${ROOT_DIR}/ext/oss_eda_base/Dockerfile" \
       -t "${BASE_IMAGE_TAG}" \
       "${ROOT_DIR}/ext/oss_eda_base"
@@ -232,6 +252,7 @@ if [[ "$have_genial" == false ]]; then
     --build-arg SWACT_BRANCH="$(git -C ext/swact rev-parse --abbrev-ref HEAD)" \
     --build-arg SWACT_REMOTE="$(git -C ext/swact config --get remote.origin.url || echo unknown)" \
     --build-arg SWACT_DIRTY="$(test -n "$(git -C ext/swact status --porcelain)" && echo 1 || echo 0)" \
+    ${BUILDKIT_OPTS} \
     -f "${ROOT_DIR}/.devcontainer/docker/Dockerfile" \
     --target genial-latest \
     -t genial:latest \
@@ -249,6 +270,7 @@ if [[ "$have_flowy" == false ]]; then
     --build-arg FLOWY_BRANCH="$(git -C "$SUB" rev-parse --abbrev-ref HEAD)" \
     --build-arg FLOWY_REMOTE="$(git -C "$SUB" config --get remote.origin.url || echo unknown)" \
     --build-arg FLOWY_DIRTY="$(test -n "$(git -C "$SUB" status --porcelain)" && echo 1 || echo 0)" \
+    ${BUILDKIT_OPTS} \
     -f "${ROOT_DIR}/${SUB}/docker/Dockerfile" \
     --target flowy-latest \
     -t flowy:latest \

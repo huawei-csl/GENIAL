@@ -157,10 +157,12 @@ We recommend reading it in the order suggested as in the [usage documentation](#
 You can also read the [GENIAL paper](https://arxiv.org/abs/2507.18989) to get a better idea of what this repository will enable you to do.
 
 ```bash
-./.devcontainer/docker/build_dockers.sh --build-base [--no-download]
+./.devcontainer/docker/build_dockers.sh --build-base [--no-download] [--sequential]
 ```
 
-The `--no-download` flag can be used to force the oss_eda_base docker image to be built from scratch instead of downloading the pre-built one.
+**Options:**
+- `--no-download`: Force the oss_eda_base docker image to be built from scratch instead of downloading the pre-built one
+- `--sequential` or `-s`: Limit parallelism for machines with limited resources (useful for WSL or systems with few CPU cores to prevent freezing)
 
 ### 5. [Developper] Enable pre-commit hooks
 
