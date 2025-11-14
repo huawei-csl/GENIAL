@@ -11,8 +11,8 @@ Ready-to-use YAML files live in `scripts/loop_scripts/configs`. Start from `flow
 To execute the loop on a single machine:
 
 ```bash
-python scripts/loop_scripts/full_run_v2.py \
-  --config_filepath scripts/loop_scripts/configs/flowy_loop_mixed_default.yaml
+python src/genial/loop/full_run_v2.py \ 
+  --config_filepath scripts/loop_scripts/configs/cmplx_loop.yaml
 ```
 
 This command sequentially launches generation, training, recommendation and analysis using local resources. Results are written under the directory defined in the configuration.

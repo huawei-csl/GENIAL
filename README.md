@@ -101,9 +101,12 @@ flowchart LR
 
 ```bash
 # 1. Clone the repository without its submodules
-git clone https://github.com/huawei-csl/genial.git
+git clone https://github.com/huawei-csl/GENIAL.git
 
-# 2. Initialize submodules manually:
+# 2. Enter the repo
+cd GENIAL
+
+# 3. Initialize submodules manually:
 git -c submodule.ext/flowy.update=none submodule update --init --recursive
 ```
 > *Note:* for now, Flowy is not yet open-source. We thus specifically avoid cloning it.
@@ -178,16 +181,16 @@ pre-commit install
 
 ```bash
 python -m genial.experiment.task_launcher \
-  --experiment_name multiplier_2bi_4bo_permuti_allcells_notech_fullsweep_only \
+  --experiment_name multiplier_3bi_6bo_permuti_allcells_notech_fullsweep_only \
   --output_dir_name demo \
-  --only_gener --nb_new_designs 1
+  --only_gener --nb_new_designs 50
 ```
 
 ### Run a minimal end‑to‑end loop (debug mode):
 
 ```bash
 python -m genial.experiment.task_launcher \
-  --experiment_name multiplier_2bi_4bo_permuti_allcells_notech_fullsweep_only \
+  --experiment_name multiplier_3bi_6bo_permuti_allcells_notech_fullsweep_only \
   --output_dir_name demo_run \
   --debug --nb_workers 1
 ```
