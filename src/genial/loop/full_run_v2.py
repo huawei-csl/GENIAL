@@ -47,19 +47,19 @@ class SlurmDispatcher:
     ]
 
     __valid_nodes__ = [
-        # "aisrv01",
+        "aisrv01",
         # "aisrv02",
         "aisrv03",
-        # "epyc01",
-        # "epyc02",
+        "epyc01",
+        "epyc02",
     ]
 
     __valid_work_dirpath__ = [
-        # "/netscratch/aisrv01",
+        "/netscratch/aisrv01",
         # "/netscratch/aisrv02",
         "/netscratch/aisrv03",
-        # "/netscratch/epyc01",
-        # "/netscratch/epyc02",
+        "/netscratch/epyc01",
+        "/netscratch/epyc02",
     ]
 
     __partition__ = {
