@@ -754,7 +754,11 @@ def __get_valid_designs_db(root_dirpath: Path, step: str, bulk_flow_dirname: str
         except FileNotFoundError:
             break
         except Exception as e:
-            raise NotImplementedError(f"Specific error handling for {e} should be implemented.")
+
+            raise NotImplementedError(
+                f"File loading failed on {valid_design_db_filepath}"
+                f"Specific error handling for {e} should be implemented."
+            )
 
     if valid_designs_df is None:
         valid_designs_df = pd.DataFrame({c: [] for c in dtype_map.keys()}).astype(dtype=dtype_map)
