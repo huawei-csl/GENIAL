@@ -15,7 +15,7 @@ from time import time, sleep
 from typing import Any
 from types import SimpleNamespace
 import json
-from pyarrow.lib import ArrowInvalid
+from pyarrow.lib import ArrowInvalid, ArrowIOError
 
 
 import pandas as pd
@@ -751,12 +751,14 @@ def __get_valid_designs_db(root_dirpath: Path, step: str, bulk_flow_dirname: str
         except ArrowInvalid:
             # File is being written by another process
             sleep(1)
+        except ArrowIOError:
+            sleep(1)
         except FileNotFoundError:
             break
         except Exception as e:
 
             raise NotImplementedError(
-                f"File loading failed on {valid_design_db_filepath}"
+                f"File loading failed on {valid_design_db_filepath}!\n"
                 f"Specific error handling for {e} should be implemented."
             )
 
