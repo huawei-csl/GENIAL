@@ -116,7 +116,7 @@ def setup_launch_args_dict(flowy_run_config: dict, nb_workers: int):
 def run_flow_wrapper(flowy_run_config: dict, nb_parallel_runs: int):
     try:
         launch_params_dict = setup_launch_args_dict(flowy_run_config, nb_workers=nb_parallel_runs)
-        with silence_output():
+        if global_vars["debug"]:
             result, tmp_dir = launch_docker(
                 **launch_params_dict,
                 copy_in_src_dir="",
@@ -126,6 +126,18 @@ def run_flow_wrapper(flowy_run_config: dict, nb_parallel_runs: int):
                 avoid_copy=True,
                 # silence_jobs=True,
             )
+        else:
+            with silence_output():
+                result, tmp_dir = launch_docker(
+                    **launch_params_dict,
+                    copy_in_src_dir="",
+                    dont_stream=True,
+                    return_tmp_dir=True,
+                    debug=global_vars["debug"],
+                    avoid_copy=True,
+                    # silence_jobs=True,
+                )
+
 
     except Exception as e:
         logger.error(f"There was an error running flowy synthesis:")
