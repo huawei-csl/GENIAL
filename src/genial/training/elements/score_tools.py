@@ -102,6 +102,8 @@ class ScoreRescaler:
 class ScoreTransformer:
     @staticmethod
     def trans_count(df: pd.DataFrame):  # Synth based
+        if "nb_transistors" not in df.columns.tolist():
+            raise ValueError(f"df of shape {df.shape} does not contain 'nb_transistors'. Available columns: {df.columns.tolist()}")
         return df["nb_transistors"].astype(int)
 
     @staticmethod
