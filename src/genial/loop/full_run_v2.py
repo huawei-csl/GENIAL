@@ -47,19 +47,19 @@ class SlurmDispatcher:
     ]
 
     __valid_nodes__ = [
-        # "aisrv01",
+        "aisrv01",
         # "aisrv02",
         "aisrv03",
-        # "epyc01",
-        # "epyc02",
+        "epyc01",
+        "epyc02",
     ]
 
     __valid_work_dirpath__ = [
-        # "/netscratch/aisrv01",
+        "/netscratch/aisrv01",
         # "/netscratch/aisrv02",
         "/netscratch/aisrv03",
-        # "/netscratch/epyc01",
-        # "/netscratch/epyc02",
+        "/netscratch/epyc01",
+        "/netscratch/epyc02",
     ]
 
     __partition__ = {
@@ -186,8 +186,8 @@ class SlurmDispatcher:
         # if SlurmDispatcher.__partition__[task] == "VNL_GPU":
         # cmd_prefix_list += ["--exclude=aime02,aime01"]
         if SlurmDispatcher.__partition__[task] == "AI-CPU,Zen3" and not task == "clean":
-            cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01,aisrv02"]
-            # cmd_prefix_list += ["--exclude=aisrv02"]
+            # cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01,aisrv02"]
+            cmd_prefix_list += ["--exclude=aisrv02"]
             # pass
 
         # if node is not None:
