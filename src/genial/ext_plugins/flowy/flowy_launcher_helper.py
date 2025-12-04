@@ -56,8 +56,8 @@ set +e
 
 # OMP_NUM_THREADS for lightgbm
 # sleep infinity
-PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 /prog/pyenv_eda/bin/python -u $python_main_path {" ".join($arg_list)} {"> /data/output.txt" if $silence_jobs else "2>&1 | tee /data/output.txt"}
-#PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 /prog/pyenv_eda/bin/python -u $python_main_path {" ".join($arg_list)} > /data/output.txt
+PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 python -u $python_main_path {" ".join($arg_list)} {"> /data/output.txt" if $silence_jobs else "2>&1 | tee /data/output.txt"}
+#PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 python -u $python_main_path {" ".join($arg_list)} > /data/output.txt
 
 # wait forever for debugging
 # while true; do sleep 1000; done
@@ -116,7 +116,7 @@ def setup_launch_args_dict(flowy_run_config: dict, nb_workers: int):
 def run_flow_wrapper(flowy_run_config: dict, nb_parallel_runs: int):
     try:
         launch_params_dict = setup_launch_args_dict(flowy_run_config, nb_workers=nb_parallel_runs)
-        if global_vars["debug"]:
+        with silence_output():
             result, tmp_dir = launch_docker(
                 **launch_params_dict,
                 copy_in_src_dir="",
@@ -126,18 +126,6 @@ def run_flow_wrapper(flowy_run_config: dict, nb_parallel_runs: int):
                 avoid_copy=True,
                 # silence_jobs=True,
             )
-        else:
-            with silence_output():
-                result, tmp_dir = launch_docker(
-                    **launch_params_dict,
-                    copy_in_src_dir="",
-                    dont_stream=True,
-                    return_tmp_dir=True,
-                    debug=global_vars["debug"],
-                    avoid_copy=True,
-                    # silence_jobs=True,
-                )
-
 
     except Exception as e:
         logger.error(f"There was an error running flowy synthesis:")
