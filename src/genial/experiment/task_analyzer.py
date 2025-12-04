@@ -2297,7 +2297,10 @@ class Analyzer(LoopModule):
         encoding_dicts_df = file_parsers.read_all_existing_encodings_v2(
             self.dir_config.root_output_dir, self.dir_config.bulk_flow_dirname
         )
-        cond = encoding_dicts_df["enc_dict_str"] == classic_encoding_subdict_str
+        try:
+            cond = encoding_dicts_df["enc_dict_str"] == classic_encoding_subdict_str
+        except Exception as e:
+            raise ValueError(f"Error {e} occured. Shape {encoding_dicts_df.shape}, cols {encoding_dicts_df.columns}")
         found = False
         if cond.sum():
             found = True
