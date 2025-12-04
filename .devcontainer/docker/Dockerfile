@@ -22,7 +22,7 @@ RUN set -eux; \
     find . -maxdepth 2 -type d -name '*.egg-info' -exec rm -rf {} +; \
     chmod -R u+rwX,g+rwX .; \
     [ -f LICENSE ] || echo 'SPDX-License-Identifier: MIT' > LICENSE; \
-    PY=/home/vscode/pyenv_eda/bin/python; \
+    PY=/prog/pyenv_eda/bin/python; \
     uv build --python="$PY" --wheel; \
     ls -l dist
 
@@ -47,21 +47,21 @@ ENV SWACT_COMMIT=${SWACT_COMMIT} \
     SWACT_DIRTY=${SWACT_DIRTY}
 
 # Ensure venv python is on PATH for convenience (also available as /usr/local/bin/python)
-ENV PATH=/home/vscode/pyenv_eda/bin:/usr/local/bin:$PATH
+ENV PATH=/prog/pyenv_eda/bin:/usr/local/bin:$PATH
 
 # Install swact wheel (no source tree kept)
 RUN mkdir -p /app/swact/.build
 # IMPORTANT: ensure vscode owns the wheel to allow cleanup
 COPY --from=swact-builder --chown=vscode:vscode /tmp/swact/dist/*.whl /tmp/wheels/
 RUN set -eux; \
-    PY=/home/vscode/pyenv_eda/bin/python; \
+    PY=/prog/pyenv_eda/bin/python; \
     uv pip install --python="$PY" --no-cache-dir /tmp/wheels/*.whl; \
     rm -rf /tmp/wheels
 
 # Preinstall GENIAL deps (filter out flowy) and clean tmp in same layer
 COPY --chown=vscode:vscode requirements.txt requirements_extra.txt /tmp/pip/
 RUN set -eux; \
-    PY=/home/vscode/pyenv_eda/bin/python; \
+    PY=/prog/pyenv_eda/bin/python; \
     if [ -f /tmp/pip/requirements.txt ]; then \
       sed '/^flowy\s*$/d' /tmp/pip/requirements.txt > /tmp/pip/requirements.preinstall.txt; \
       uv pip install --python="$PY" --no-cache-dir -r /tmp/pip/requirements.preinstall.txt; \
