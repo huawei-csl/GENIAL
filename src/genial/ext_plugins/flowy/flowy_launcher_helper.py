@@ -56,8 +56,8 @@ set +e
 
 # OMP_NUM_THREADS for lightgbm
 # sleep infinity
-PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 python -u $python_main_path {" ".join($arg_list)} {"> /data/output.txt" if $silence_jobs else "2>&1 | tee /data/output.txt"}
-#PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 python -u $python_main_path {" ".join($arg_list)} > /data/output.txt
+PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 /prog/pyenv_eda/bin/python -u $python_main_path {" ".join($arg_list)} {"> /data/output.txt" if $silence_jobs else "2>&1 | tee /data/output.txt"}
+#PYTHONPATH=$$(pwd) OMP_NUM_THREADS=1 /prog/pyenv_eda/bin/python -u $python_main_path {" ".join($arg_list)} > /data/output.txt
 
 # wait forever for debugging
 # while true; do sleep 1000; done
