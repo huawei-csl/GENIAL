@@ -490,12 +490,10 @@ def process_pool_helper(
         for func_kwargs in func_kwargs_gen:
             _res = func(**func_kwargs)
             return_list.append(_res)
-            break
     else:
         for func_args in func_args_gen:
             _res = func(*func_args)
             return_list.append(_res)
-            break
     # else:
     #     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
     #         # Submit tasks to the executor
