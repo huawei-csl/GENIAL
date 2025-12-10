@@ -494,7 +494,7 @@ class DesignGenerator(LoopModule):
 
         # Prepare all output directories
         gener_filepath_list = self.__prepare_all_gener_dir_path(_design_numbers_to_make, output_dir_path)
-        assert nb_config_dicts == len(gener_filepath_list)
+        assert nb_config_dicts == len(gener_filepath_list), f"{nb_config_dicts} != {len(gener_filepath_list)}"
 
         # Generate all output verilog files (substitute template)
         logger.info(f"Generating all designs from template files {self.template_verilog_filepaths}")
