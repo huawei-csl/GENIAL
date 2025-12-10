@@ -439,41 +439,80 @@ def column_merger_helper(
     return dest_df
 
 
+# def process_pool_helper(
+#     func,
+#     func_args_gen: callable = None,
+#     func_kwargs_gen: callable = None,
+#     error_message: str = None,
+#     max_workers: int = global_vars.get("nb_workers", 16),
+#     pbar: tqdm = None,
+# ):
+#     return_list = []
+#     if global_vars.get("debug", False) or max_workers == 1:
+#         if func_kwargs_gen is not None:
+#             for func_kwargs in func_kwargs_gen:
+#                 _res = func(**func_kwargs)
+#                 return_list.append(_res)
+#         else:
+#             for func_args in func_args_gen:
+#                 _res = func(*func_args)
+#                 return_list.append(_res)
+#     else:
+#         with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+#             # Submit tasks to the executor
+#             if func_kwargs_gen is not None:
+#                 futures = [executor.submit(func, **func_kwargs) for func_kwargs in func_kwargs_gen]
+#             else:
+#                 futures = [executor.submit(func, *func_args) for func_args in func_args_gen]
+#
+#             # Collect results as they become available (order not guaranteed)
+#             for future in concurrent.futures.as_completed(futures):
+#                 res_row = future.result()
+#                 if res_row is not None:
+#                     return_list.append(res_row)
+#                     if pbar is not None:
+#                         pbar.update(1)
+#                 elif error_message:
+#                     logger.warning(error_message)
+#     return return_list
+
 def process_pool_helper(
-    func,
-    func_args_gen: callable = None,
-    func_kwargs_gen: callable = None,
-    error_message: str = None,
-    max_workers: int = global_vars.get("nb_workers", 16),
-    pbar: tqdm = None,
+        func,
+        func_args_gen: callable = None,
+        func_kwargs_gen: callable = None,
+        error_message: str = None,
+        max_workers: int = global_vars.get("nb_workers", 16),
+        pbar: tqdm = None,
 ):
     return_list = []
-    if global_vars.get("debug", False) or max_workers == 1:
-        if func_kwargs_gen is not None:
-            for func_kwargs in func_kwargs_gen:
-                _res = func(**func_kwargs)
-                return_list.append(_res)
-        else:
-            for func_args in func_args_gen:
-                _res = func(*func_args)
-                return_list.append(_res)
+    # if global_vars.get("debug", False) or max_workers == 1:
+    if func_kwargs_gen is not None:
+        for func_kwargs in func_kwargs_gen:
+            _res = func(**func_kwargs)
+            return_list.append(_res)
+            break
     else:
-        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-            # Submit tasks to the executor
-            if func_kwargs_gen is not None:
-                futures = [executor.submit(func, **func_kwargs) for func_kwargs in func_kwargs_gen]
-            else:
-                futures = [executor.submit(func, *func_args) for func_args in func_args_gen]
-
-            # Collect results as they become available (order not guaranteed)
-            for future in concurrent.futures.as_completed(futures):
-                res_row = future.result()
-                if res_row is not None:
-                    return_list.append(res_row)
-                    if pbar is not None:
-                        pbar.update(1)
-                elif error_message:
-                    logger.warning(error_message)
+        for func_args in func_args_gen:
+            _res = func(*func_args)
+            return_list.append(_res)
+            break
+    # else:
+    #     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+    #         # Submit tasks to the executor
+    #         if func_kwargs_gen is not None:
+    #             futures = [executor.submit(func, **func_kwargs) for func_kwargs in func_kwargs_gen]
+    #         else:
+    #             futures = [executor.submit(func, *func_args) for func_args in func_args_gen]
+    #
+    #         # Collect results as they become available (order not guaranteed)
+    #         for future in concurrent.futures.as_completed(futures):
+    #             res_row = future.result()
+    #             if res_row is not None:
+    #                 return_list.append(res_row)
+    #                 if pbar is not None:
+    #                     pbar.update(1)
+    #             elif error_message:
+    #                 logger.warning(error_message)
     return return_list
 
 

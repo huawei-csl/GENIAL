@@ -120,8 +120,8 @@ def run_flow_wrapper(flowy_run_config: dict, nb_parallel_runs: int):
             result, tmp_dir = launch_docker(
                 **launch_params_dict,
                 copy_in_src_dir="",
-                # dont_stream=True,
-                dont_stream=False,
+                dont_stream=True,
+                # dont_stream=False,
                 return_tmp_dir=True,
                 debug=global_vars["debug"],
                 avoid_copy=True,
