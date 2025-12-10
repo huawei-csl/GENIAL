@@ -53,7 +53,7 @@ files = ["requirements.txt"]
 # Configure uv to resolve the local 'flowy' package from the submodule
 # This makes `uv pip install -e .` install `ext/flowy` automatically when present.
 [tool.uv.sources]
-flowy = { path = "ext/flowy", editable = true }
+flowy = { path = "ext/FLOWY", editable = true }
 swact  = { path = "ext/swact",  editable = true }
 
 [tool.pytest.ini_options]
