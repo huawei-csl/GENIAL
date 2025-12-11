@@ -9,3 +9,6 @@
 [submodule "ext/swact"]
 	path = ext/swact
 	url = ../swact.git
+[submodule "ext/FLOWY"]
+	path = ext/FLOWY
+	url = https://github.com/huawei-csl/FLOWY.git
