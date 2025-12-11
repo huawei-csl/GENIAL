@@ -16,7 +16,7 @@
 "yml_config_path": "resources/pretrained_model/embedding/model_config-cmplx.yml"
 # ----- Generation Parameters
 "batch_size_proto": 40
-"max_epochs_proto": 20
+"max_epochs_proto": 200
 "nb_gener_prototypes": 80
 # ----- Launch and analyze parameters
 "synth_only": False
