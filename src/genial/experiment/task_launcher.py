@@ -301,8 +301,8 @@ class Launcher(LoopModule):
             user="root",  # Run as root to have permissions in /app and /prog
             name=container_name,
             working_dir="/app",
-            # command=["bash", "-c", cmd],
-            command=["sleep", "infinity"],
+            command=["bash", "-c", cmd],
+            #command=["sleep", "infinity"],
             remove=True,
         )
 

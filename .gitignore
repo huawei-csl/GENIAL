@@ -207,3 +207,7 @@ infinite_echo*
 
 
 !docs/images/genial_overview.png
+
+*.bk
+
+uv.lock
