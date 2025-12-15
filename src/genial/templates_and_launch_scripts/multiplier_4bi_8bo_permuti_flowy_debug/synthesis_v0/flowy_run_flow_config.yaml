@@ -3,9 +3,11 @@ encoding_permutation_id: 0
 bitwidth_input: 4
 iterations: 1
 chains: 1
-chain_len: 20
+#chain_len: 3000
+chain_len: 5
 chain_workers: 1
-nb_runs: 2
+#nb_runs: 12
+nb_runs: 3
 env_option: "auto"
 experiment: "genial"
 verbose: False
@@ -29,7 +31,7 @@ input_encoding: "twos_complement"
 output_encoding: "twos_complement"
 operation: "multiplication"
 simulation_tb: False
-simulation_tb_final: True
+simulation_tb_final: False
 simulation_tb_save_all: False
 tb_params_sim_mode: "normal_random"
 tb_params_nb_iter: 40
@@ -42,4 +44,4 @@ tb_params_sim_code: null
 design_run_id: null
 n_states: null
 encoding_dict_json_filepath: null
-final_selection_metric: "swact_count_weighted"
+final_selection_metric: "nb_transistors"
