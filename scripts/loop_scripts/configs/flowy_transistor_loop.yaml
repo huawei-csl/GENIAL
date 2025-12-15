@@ -15,9 +15,9 @@
 "ssl_model_checkpoint": "resources/pretrained_model/embedding/117_0.0102_000.ckpt"
 "yml_config_path": "resources/pretrained_model/embedding/model_config.yml"
 # ----- Generation Parameters
-"batch_size_proto": 4
+"batch_size_proto": 40
 "max_epochs_proto": 160
-"nb_gener_prototypes": 4
+"nb_gener_prototypes": 160
 # ----- Launch and analyze parameters
 "synth_only": False
 "cmplx_only": False
