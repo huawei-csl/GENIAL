@@ -39,3 +39,18 @@ analysis_df2 = analysis_df[analysis_df['nb_transistors2'] != analysis_df['nb_tra
 
 
 
+import pandas as pd
+
+
+import pandas as pd
+
+with open('/home/ramaudruz/squeue_output.txt', 'r') as f:
+    lines = f.readlines()
+
+lines_clean = [
+    [ls for ls in l.split() if ls != '']
+    for l in lines
+]
+
+df = pd.DataFrame(lines_clean[1:], columns=lines_clean[0] + [f'col_{i}' for i in range(3)])
+
