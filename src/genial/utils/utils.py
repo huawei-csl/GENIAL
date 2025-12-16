@@ -476,6 +476,27 @@ def process_pool_helper(
                     logger.warning(error_message)
     return return_list
 
+# RUN IN SERIES
+# def process_pool_helper(
+#         func,
+#         func_args_gen: callable = None,
+#         func_kwargs_gen: callable = None,
+#         error_message: str = None,
+#         max_workers: int = global_vars.get("nb_workers", 16),
+#         pbar: tqdm = None,
+# ):
+#     return_list = []
+#     # if global_vars.get("debug", False) or max_workers == 1:
+#     if func_kwargs_gen is not None:
+#         for func_kwargs in func_kwargs_gen:
+#             _res = func(**func_kwargs)
+#             return_list.append(_res)
+#     else:
+#         for func_args in func_args_gen:
+#             _res = func(*func_args)
+#             return_list.append(_res)
+#     return return_list
+
 
 def combine_dict_list(list_of_dicts):
     """
