@@ -15,8 +15,7 @@ from time import time, sleep
 from typing import Any
 from types import SimpleNamespace
 import json
-from pyarrow.lib import ArrowInvalid
-
+from pyarrow.lib import ArrowInvalid, ArrowIOError
 
 import pandas as pd
 from swact.gates_configuration import GatesConfig
@@ -750,6 +749,10 @@ def __get_valid_designs_db(root_dirpath: Path, step: str, bulk_flow_dirname: str
             break
         except ArrowInvalid:
             # File is being written by another process
+            sleep(1)
+        except ArrowIOError:
+            sleep(1)
+        except OSError:
             sleep(1)
         except FileNotFoundError:
             break
