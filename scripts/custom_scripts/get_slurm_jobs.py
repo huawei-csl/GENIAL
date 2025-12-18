@@ -32,7 +32,7 @@ def get_slurm_jobs(user):
     return jobs
 
 def should_cancel(job_name):
-    return job_name != 'stay_alive'
+    return (job_name != 'stay_alive') and not job_name.startswith('tar')
 
 
 def scancel_job(jobid):
