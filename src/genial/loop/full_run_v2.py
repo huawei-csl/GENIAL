@@ -186,8 +186,8 @@ class SlurmDispatcher:
         # if SlurmDispatcher.__partition__[task] == "VNL_GPU":
         # cmd_prefix_list += ["--exclude=aime02,aime01"]
         if SlurmDispatcher.__partition__[task] == "AI-CPU,Zen3" and not task == "clean":
-            # cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01,aisrv02"]
-            pass
+            cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01,aisrv02"]
+            # pass
 
         # if node is not None:
         # cmd_prefix_list.append(f"--nodelist={node}")
