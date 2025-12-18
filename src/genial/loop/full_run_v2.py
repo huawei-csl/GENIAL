@@ -63,13 +63,21 @@ class SlurmDispatcher:
     ]
 
     __partition__ = {
-        "generate": "AI-CPU,Zen3",
-        "launch": "AI-CPU,Zen3",
-        "analyze": "AI-CPU,Zen3",
+        # "generate": "AI-CPU,Zen3",
+        # "launch": "AI-CPU,Zen3",
+        # "analyze": "AI-CPU,Zen3",
+        # "train": "AI-CPU",
+        # "recommend": "AI-CPU",
+        # "merge": "AI-CPU,Zen3",
+        # "clean": "AI-CPU,Zen3",
+
+        "generate": "AI-CPU",
+        "launch": "AI-CPU",
+        "analyze": "AI-CPU",
         "train": "AI-CPU",
         "recommend": "AI-CPU",
-        "merge": "AI-CPU,Zen3",
-        "clean": "AI-CPU,Zen3",
+        "merge": "AI-CPU",
+        "clean": "AI-CPU",
     }
 
     __mem_per_cpu__ = {
