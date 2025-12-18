@@ -3,7 +3,7 @@ import os
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import pandas as pd
-
+import numpy as np
 #
 # synth_out = (
 #     '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy'
@@ -105,9 +105,21 @@ if __name__ == "__main__":
 
     f_to_min_swact_list = []
 
+
+    existing = pd.read_csv('/home/ramaudruz/misc/swact_data.csv')
+
+    done_files = set(existing['file'])
+
+
+
     for i, f in enumerate(flowy_files):
+        if f in done_files:
+            continue
         if i % 1000 == 0:
             print(i)
+            new_df = pd.DataFrame(f_to_min_swact_list)
+            all_new = pd.concat([existing, new_df], ignore_index=True)
+            all_new.to_csv('/home/ramaudruz/misc/swact_data.csv', index=False)
         df = pd.read_parquet(f)
         min_val = df['swact_count_weighted'].min()
 
@@ -116,7 +128,13 @@ if __name__ == "__main__":
             'min_val': min_val,
         })
 
-    pd.DataFrame(f_to_min_swact_list).to_csv('/home/ramaudruz/misc/swact_data.csv', index=False)
+    new_df = pd.DataFrame(f_to_min_swact_list)
+    all_new = pd.concat([existing, new_df], ignore_index=True)
+    all_new.to_csv('/home/ramaudruz/misc/swact_data.csv', index=False)
+
+
+
+
 
     #
     #
@@ -155,3 +173,64 @@ if __name__ == "__main__":
     # pd.DataFrame(f_to_min_swact_list).to_csv('/home/ramaudruz/misc/swact_data.csv', index=False)
     #
     #
+    #
+    # import matplotlib.pyplot as plt
+    #
+    # plt.hist(all_new['min_val'], bins=500)
+    # plt.xlabel("Value")
+    # plt.ylabel("Frequency")
+    # plt.show()
+
+    all_new = pd.read_csv('/home/ramaudruz/misc/swact_data.csv')
+
+    all_new2 = all_new[all_new['min_val'].notnull()].reset_index(drop=True)
+
+
+
+
+    all_new2['hist_value'] = pd.cut(
+        all_new2['min_val'],
+        bins=100
+    )
+
+    vc = all_new2['hist_value'].value_counts().reset_index()
+
+    vc['500'] = 500
+    vc['min_count'] = np.minimum(vc['500'], vc['count'])
+
+    vc['200'] = 200
+    vc['min_count_200'] = np.minimum(vc['200'], vc['count'])
+
+
+    vc['300'] = 300
+    vc['min_count_300'] = np.minimum(vc['300'], vc['count'])
+
+
+    vc2 = vc.sort_values('hist_value').reset_index(drop=True)
+
+    sampled_df = (
+        all_new2
+        .groupby('hist_value', group_keys=False)
+        .apply(lambda x: x.sample(n=min(len(x), 300), replace=False))
+    )
+
+
+    import matplotlib.pyplot as plt
+
+    plt.hist(sampled_df['min_val'], bins=500)
+    plt.xlabel("Value")
+    plt.ylabel("Frequency")
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
