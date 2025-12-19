@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --ntasks=1
+#SBATCH --reservation=ai-team
 #SBATCH --output="/home/%u/slurm_logs/genial/sbatch_info/genial_flowy_%j_%N_$timestamp.log"
 #SBATCH --error="/home/%u/slurm_logs/genial/sbatch_error/genial_flowy_%j_%N_$timestamp.log"
 # Move to working directory
