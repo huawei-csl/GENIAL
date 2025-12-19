@@ -370,7 +370,7 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_script(script_path, extra_args: list[str] = None, is_dry_run=False):
-        cmd = ["sbatch"]
+        cmd = ["sbatch"] + ["--reservation=ai-team"]
         if extra_args:
             cmd += extra_args
         cmd.append(script_path)
