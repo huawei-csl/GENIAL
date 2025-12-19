@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 import subprocess
-import pandas as pd
+import os
 
 TEMPLATE_PATH = Path("scripts/slurm_scripts/template_flowy.slurm")
 OUTPUT_PATH = Path("/home/ramaudruz/tmp_genial_slurm_scripts")
@@ -28,14 +28,10 @@ def write_and_submit(design_numbers, job_name):
     subprocess.run(["sbatch", str(slurm_file)], check=True)
 
 
+des_nums = [f.split('_')[-1] for f in os.listdir('/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/uniform_initial_dir/generation_out')]
+des_nums.sort()
 
-
-# Example usage
-write_and_submit(
-    design_numbers=[
-        "00000000000002",
-        "00000000000003",
-        "00000000000004",
-    ],
-    job_name="multiplier_chunk_1"
-)
+for i in range(0, len(des_nums), 2):
+    write_and_submit(design_numbers=[des_nums[i], des_nums[i + 1]], job_name=f'flowy_run_{i}')
+    if i > 10:
+        break
