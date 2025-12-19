@@ -47,7 +47,7 @@ class SlurmDispatcher:
     ]
 
     __valid_nodes__ = [
-        # "aisrv01",
+        "aisrv01",
         # "aisrv02",
         "aisrv03",
         # "epyc01",
