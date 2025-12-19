@@ -33,5 +33,5 @@ des_nums.sort()
 
 for i in range(0, len(des_nums), 2):
     write_and_submit(design_numbers=[des_nums[i], des_nums[i + 1]], job_name=f'flowy_run_{i}')
-    if i > 10:
+    if i > 3:
         break
