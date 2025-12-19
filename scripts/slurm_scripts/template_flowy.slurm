@@ -2,7 +2,7 @@
 #SBATCH --ntasks=1
 #SBATCH --output="/home/%u/slurm_logs/genial/sbatch_info/genial_flowy_%j_%N_20251219_101556.log"
 #SBATCH --error="/home/%u/slurm_logs/genial/sbatch_error/genial_flowy_%j_%N_20251219_101556.log"
-#SBATCH --reservation=ai-team
+#SBATCH --reservation=ai-team,ai-team2
 #SBATCH --nodelist=aisrv03
 # Move to working directory
 cd $HOME/proj/GENIAL

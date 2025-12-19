@@ -5,7 +5,7 @@
 #SBATCH --time=06:00:00
 #SBATCH --cpus-per-task=256
 #SBATCH --nodelist=aisrv03
-#SBATCH --reservation=ai-team
+#SBATCH --reservation=ai-team,ai-team2
 #SBATCH --partition=AI-CPU
 
 cd /home/ramaudruz/proj/GENIAL

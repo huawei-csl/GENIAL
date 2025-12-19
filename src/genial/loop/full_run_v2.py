@@ -48,7 +48,7 @@ class SlurmDispatcher:
 
     __valid_nodes__ = [
         # "aisrv01",
-        # "aisrv02",
+        "aisrv02",
         "aisrv03",
         # "epyc01",
         # "epyc02",
@@ -165,7 +165,7 @@ class SlurmDispatcher:
             f"--time={time}",
             # "--ntasks=1",
             f"--mem-per-cpu=2G",
-            "--reservation=ai-team",
+            "--reservation=ai-team,ai-team2",
             "--partition=" + SlurmDispatcher.__partition__[task],
             f"--cpus-per-task={cpus_per_task}",
             # "--nodelist=" + SlurmDispatcher.__nodelist__[task],
@@ -398,7 +398,7 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_job(cmd: str, sbatch_args: list[str], is_dry_run=False):
-        _cmd = ["sbatch"] + sbatch_args  + ["--reservation=ai-team"]+ [cmd]
+        _cmd = ["sbatch"] + sbatch_args  + ["--reservation=ai-team,ai-team2"]+ [cmd]
 
         if is_dry_run:
             logger.info("Would submit command: {}".format(" ".join(_cmd)))
