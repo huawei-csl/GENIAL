@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 import subprocess
+import pandas as pd
 
 TEMPLATE_PATH = Path("scripts/slurm_scripts/template_flowy.slurm")
 OUTPUT_PATH = Path("/home/ramaudruz/tmp_genial_slurm_scripts")
@@ -25,6 +26,7 @@ def write_and_submit(design_numbers, job_name):
 
     # Submit job
     subprocess.run(["sbatch", str(slurm_file)], check=True)
+
 
 
 
