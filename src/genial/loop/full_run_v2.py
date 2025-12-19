@@ -516,13 +516,14 @@ class SlurmDispatcher:
                         if sq_state == "PENDING" and sq_reason is not None:
                             reason_lc = sq_reason.lower()
                             if "reqnodenotavail" in reason_lc or "unavailablenodes" in reason_lc:
-                                logger.warning(
-                                    f"Job {job_id} appears unschedulable (reason: {sq_reason}). Cancelling to avoid hang."
-                                )
-                                SlurmDispatcher.cancel_job(job_id)
-                                jobs[job_index]["status"] = "CANCELLED"
-                                # Let the normal failure/cancel flow handle retries/termination
-                                continue
+                                pass
+                                # logger.warning(
+                                #     f"Job {job_id} appears unschedulable (reason: {sq_reason}). Cancelling to avoid hang."
+                                # )
+                                # SlurmDispatcher.cancel_job(job_id)
+                                # jobs[job_index]["status"] = "CANCELLED"
+                                # # Let the normal failure/cancel flow handle retries/termination
+                                # continue
                     if status and status not in ["PENDING", "RUNNING"]:
                         jobs[job_index]["status"] = status
                         logger.info(f"Job {job_id} ({job_index}) finished with status: {status}")
@@ -582,12 +583,13 @@ class SlurmDispatcher:
                         if sq_state == "PENDING" and sq_reason is not None:
                             reason_lc = sq_reason.lower()
                             if "reqnodenotavail" in reason_lc or "unavailablenodes" in reason_lc:
-                                logger.warning(
-                                    f"Job {job_id} appears unschedulable (reason: {sq_reason}). Cancelling to avoid hang."
-                                )
-                                SlurmDispatcher.cancel_job(job_id)
-                                jobs[script]["status"] = "CANCELLED"
-                                continue
+                                pass
+                                # logger.warning(
+                                #     f"Job {job_id} appears unschedulable (reason: {sq_reason}). Cancelling to avoid hang."
+                                # )
+                                # SlurmDispatcher.cancel_job(job_id)
+                                # jobs[script]["status"] = "CANCELLED"
+                                # continue
                     if status and status not in ["PENDING", "RUNNING"]:
                         jobs[script]["status"] = status
                         logger.info(f"Job {job_id} ({script}) finished with status: {status}")
