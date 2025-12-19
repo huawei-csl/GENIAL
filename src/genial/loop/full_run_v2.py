@@ -397,7 +397,7 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_job(cmd: str, sbatch_args: list[str], is_dry_run=False):
-        _cmd = ["sbatch"] + sbatch_args + [cmd]
+        _cmd = ["sbatch"] + sbatch_args  + ["--reservation=ai-team"]+ [cmd]
 
         if is_dry_run:
             logger.info("Would submit command: {}".format(" ".join(_cmd)))
