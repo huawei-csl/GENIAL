@@ -160,10 +160,10 @@ We recommend reading it in the order suggested as in the [usage documentation](#
 You can also read the [GENIAL paper](https://arxiv.org/abs/2507.18989) to get a better idea of what this repository will enable you to do.
 
 ```bash
-./.devcontainer/docker/build_dockers.sh --build-base [--no-download]
+./.devcontainer/docker/build_dockers.sh --build-base --no-download
 ```
 
-The `--no-download` flag can be used to force the oss_eda_base docker image to be built from scratch instead of downloading the pre-built one.
+The `--no-download` flag is used to force the oss_eda_base docker image to be built from scratch instead of downloading the pre-built one.
 
 ### 5. [Developper] Enable pre-commit hooks
 
