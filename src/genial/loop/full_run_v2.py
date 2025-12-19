@@ -165,6 +165,7 @@ class SlurmDispatcher:
             f"--time={time}",
             # "--ntasks=1",
             f"--mem-per-cpu=2G",
+            "--reservation=ai-team",
             "--partition=" + SlurmDispatcher.__partition__[task],
             f"--cpus-per-task={cpus_per_task}",
             # "--nodelist=" + SlurmDispatcher.__nodelist__[task],
@@ -370,7 +371,7 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_script(script_path, extra_args: list[str] = None, is_dry_run=False):
-        cmd = ["sbatch"] + ["--reservation=ai-team"]
+        cmd = ["sbatch"]
         if extra_args:
             cmd += extra_args
         cmd.append(script_path)
