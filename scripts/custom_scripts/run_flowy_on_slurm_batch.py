@@ -25,7 +25,7 @@ def write_and_submit(design_numbers, job_name):
     slurm_file.write_text(text)
 
     # Submit job
-    subprocess.run(["sbatch", str(slurm_file)], check=True)
+    subprocess.run(["sbatch", "--partition=AI-CPU", str(slurm_file)], check=True)
 
 
 des_nums = [f.split('_')[-1] for f in os.listdir('/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/uniform_initial_dir/generation_out')]
