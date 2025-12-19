@@ -8,7 +8,7 @@
 "batch_size_trainer": 10
 "max_epochs_trainer": 160
 "device": 0
-"nb_init_designs": 20
+"nb_init_designs": 23884
 "score_type": "trans"
 "use_ssl_model": True
 "trainer_version_number": 0  # Under which version number the training will be saved -- not used for loading
