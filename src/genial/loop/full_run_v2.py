@@ -155,7 +155,7 @@ class SlurmDispatcher:
             time = "48:00:00"
 
         if task == "launch" or task == "clean":
-            time = "0:45:00"
+            time = "0:60:00"
             _nb_workers = 24
 
         cpus_per_task = str(int(_nb_workers * 1.5))
