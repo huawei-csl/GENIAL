@@ -21,6 +21,8 @@ print(suc_list)
 count_list = [pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] for d in suc_list]
 
 
+print(f"Completed: {sum([c == 12 for c in count_list])}")
+
 d = suc_list[0]
 
 

@@ -47,7 +47,7 @@ class SlurmDispatcher:
     ]
 
     __valid_nodes__ = [
-        # "aisrv01",
+        "aisrv01",
         # "aisrv02",
         "aisrv03",
         # "epyc01",
@@ -155,24 +155,24 @@ class SlurmDispatcher:
             time = "48:00:00"
 
         if task == "launch" or task == "clean":
-            time = "0:60:00"
+            time = "0:80:00"
             _nb_workers = 24
 
-        cpus_per_task = str(int(_nb_workers * 1.5))
+        cpus_per_task = str(int(_nb_workers * 1.2))
 
         cmd_prefix_list = [
             f"--job-name={task}_genial_flowy",
             f"--time={time}",
             # "--ntasks=1",
             f"--mem-per-cpu=2G",
-            "--reservation=ai-team,ai-team2",
+            # "--reservation=ai-team,ai-team2",
             "--partition=" + SlurmDispatcher.__partition__[task],
             f"--cpus-per-task={cpus_per_task}",
             # "--nodelist=" + SlurmDispatcher.__nodelist__[task],
         ]
 
         if task in ["analyze", "merge", "train", "recommend"]:
-            cmd_prefix_list += ["--nodelist=aisrv03"]
+            cmd_prefix_list += ["--nodelist=aisrv01,aisrv03"]
         elif task == "clean":
             # For cleaning, submit one job per available node to speed things up.
             # Filter out nodes that are not available to avoid infinite waits.
@@ -398,7 +398,12 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_job(cmd: str, sbatch_args: list[str], is_dry_run=False):
-        _cmd = ["sbatch"] + sbatch_args  + ["--reservation=ai-team,ai-team2"]+ [cmd]
+        _cmd = (
+                ["sbatch"] +
+                sbatch_args  +
+                # ["--reservation=ai-team,ai-team2"] +
+                [cmd]
+        )
 
         if is_dry_run:
             logger.info("Would submit command: {}".format(" ".join(_cmd)))
