@@ -1,5 +1,6 @@
 
 import os
+import shutil
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import pandas as pd
@@ -15,15 +16,33 @@ suc_list.sort()
 
 print(suc_list)
 
+
 # df = pd.read_parquet('/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out/res_00000000000000/flowy_data_record.parquet')
 
 
 count_list = [pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] for d in suc_list]
 
+count_dic = {d: pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] for d in suc_list}
+
+count_dic2 = {d: c for d, c in count_dic.items() if c == 12}
+
+success_dir = list(count_dic2.keys())
+
+success_dir.sort()
 
 print(f"Completed: {sum([c == 12 for c in count_list])}")
 
 d = suc_list[0]
+
+
+to_remove = [
+    d for d in os.listdir(data_dir)
+    if not os.path.isfile(f'{data_dir}{d}/flowy_data_record.parquet')
+    or pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] != 12
+]
+
+for d in to_remove:
+    shutil.rmtree(f'{data_dir}{d}')
 
 
 

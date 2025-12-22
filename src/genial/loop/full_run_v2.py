@@ -86,12 +86,12 @@ class SlurmDispatcher:
     }
 
     __nodelist__ = {
-        "generate": "aisrv01,aisrv03",
-        "launch": "aisrv01,aisrv03",
-        "analyze": "aisrv01,aisrv03",
+        "generate": "aisrv01,,aisrv02,aisrv03",
+        "launch": "aisrv01,aisrv02,aisrv03",
+        "analyze": "aisrv01,aisrv02,aisrv03",
         "train": "aime01,aime02,aime03",
         "recommend": "aime01,aime02,aime03",
-        "merge": "aisrv01,aisrv03",
+        "merge": "aisrv01,aisrv02,aisrv03",
     }
 
     __can_multi_node__ = {
@@ -155,7 +155,7 @@ class SlurmDispatcher:
             time = "48:00:00"
 
         if task == "launch" or task == "clean":
-            time = "0:80:00"
+            time = "2:00:00"
             _nb_workers = 24
 
         cpus_per_task = str(int(_nb_workers * 1.2))
@@ -172,7 +172,7 @@ class SlurmDispatcher:
         ]
 
         if task in ["analyze", "merge", "train", "recommend"]:
-            cmd_prefix_list += ["--nodelist=aisrv01,aisrv03"]
+            cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03"]
         elif task == "clean":
             # For cleaning, submit one job per available node to speed things up.
             # Filter out nodes that are not available to avoid infinite waits.
