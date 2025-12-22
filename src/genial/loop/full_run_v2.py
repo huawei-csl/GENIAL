@@ -165,7 +165,7 @@ class SlurmDispatcher:
             f"--time={time}",
             # "--ntasks=1",
             f"--mem-per-cpu=2G",
-            "--reservation=ai-team,ai-team2",
+            "--reservation=ai-team",
             "--partition=" + SlurmDispatcher.__partition__[task],
             f"--cpus-per-task={cpus_per_task}",
             # "--nodelist=" + SlurmDispatcher.__nodelist__[task],
@@ -401,7 +401,7 @@ class SlurmDispatcher:
         _cmd = (
                 ["sbatch"] +
                 sbatch_args  +
-                ["--reservation=ai-team,ai-team2"] +
+                ["--reservation=ai-team"] +
                 [cmd]
         )
 
