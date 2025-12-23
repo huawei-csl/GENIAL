@@ -50,6 +50,9 @@ class SlurmDispatcher:
         "aisrv01",
         "aisrv02",
         "aisrv03",
+        "aime01",
+        "aime02",
+        "aime03",
         # "epyc01",
         # "epyc02",
     ]
@@ -60,6 +63,9 @@ class SlurmDispatcher:
         "/netscratch/aisrv03",
         "/netscratch/epyc01",
         "/netscratch/epyc02",
+        "/netscratch/aime01",
+        "/netscratch/aime02",
+        "/netscratch/aime03",
     ]
 
     __partition__ = {
@@ -71,13 +77,13 @@ class SlurmDispatcher:
         # "merge": "AI-CPU,Zen3",
         # "clean": "AI-CPU,Zen3",
 
-        "generate": "AI-CPU",
-        "launch": "AI-CPU",
-        "analyze": "AI-CPU",
-        "train": "AI-CPU",
-        "recommend": "AI-CPU",
-        "merge": "AI-CPU",
-        "clean": "AI-CPU",
+        "generate": "AI-CPU,VNL_GPU",
+        "launch": "AI-CPU,VNL_GPU",
+        "analyze": "AI-CPU,VNL_GPU",
+        "train": "AI-CPU,VNL_GPU",
+        "recommend": "AI-CPU,VNL_GPU",
+        "merge": "AI-CPU,VNL_GPU",
+        "clean": "AI-CPU,VNL_GPU",
     }
 
     __mem_per_cpu__ = {
@@ -86,9 +92,9 @@ class SlurmDispatcher:
     }
 
     __nodelist__ = {
-        "generate": "aisrv01,,aisrv02,aisrv03",
-        "launch": "aisrv01,aisrv02,aisrv03",
-        "analyze": "aisrv01,aisrv02,aisrv03",
+        "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03",
+        "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
+        "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
         "train": "aime01,aime02,aime03",
         "recommend": "aime01,aime02,aime03",
         "merge": "aisrv01,aisrv02,aisrv03",
@@ -172,7 +178,7 @@ class SlurmDispatcher:
         ]
 
         if task in ["analyze", "merge", "train", "recommend"]:
-            cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03"]
+            cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03,aime01,aime02,aime03"]
         elif task == "clean":
             # For cleaning, submit one job per available node to speed things up.
             # Filter out nodes that are not available to avoid infinite waits.

@@ -26,11 +26,17 @@ count_dic = {d: pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run
 
 count_dic2 = {d: c for d, c in count_dic.items() if c == 12}
 
-success_dir = list(count_dic2.keys())
+count_dic3 = {d: c for d, c in count_dic.items() if c != 12}
 
+success_dir = list(count_dic2.keys())
 success_dir.sort()
 
+unsuccess_dir = list(count_dic3.keys())
+unsuccess_dir.sort()
+
+
 print(f"Completed: {sum([c == 12 for c in count_list])}")
+print(f"Incompleted: {sum([c != 12 for c in count_list])}")
 
 d = suc_list[0]
 
@@ -41,9 +47,17 @@ to_remove = [
     or pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] != 12
 ]
 
-for d in to_remove:
-    shutil.rmtree(f'{data_dir}{d}')
+count_dic_check = {
+    d: (
+        pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].shape[0]
+        /
+        pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0]
+    )
 
+    for d in suc_list}
+
+# for d in to_remove:
+#     shutil.rmtree(f'{data_dir}{d}')
 
 
 df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
@@ -69,3 +83,107 @@ count_list = [pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_i
 
 
 d = suc_list[0]
+
+
+#
+# ##############################
+#
+#
+#
+# import pandas as pd
+# import json
+# import os
+#
+# data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/uniform_small/synth_out/'
+#
+# all_times = []
+# for d in os.listdir(data_dir):
+#     with open(f"{data_dir}{d}/data_record.json", "r") as f:
+#         data = json.load(f)
+#         time = data['runtime_metrics_extraction']
+#         all_times.append(time['value'])
+#
+#
+# print(f'time: {sum(all_times) / len(all_times)}')
+#
+# df_dict = {}
+# for d in os.listdir(data_dir):
+#     df_dict[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+#
+#
+# ##############################
+#
+#
+#
+# import pandas as pd
+# import json
+# import os
+#
+# data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/uniform_small_SHORT/synth_out/'
+#
+# all_times = []
+# for d in os.listdir(data_dir):
+#     with open(f"{data_dir}{d}/data_record.json", "r") as f:
+#         data = json.load(f)
+#         time = data['runtime_metrics_extraction']
+#         all_times.append(time['value'])
+#
+#
+# print(f'time: {sum(all_times) / len(all_times)}')
+#
+# df_dict2 = {}
+# for d in os.listdir(data_dir):
+#     df_dict2[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+#
+# ########################
+#
+#
+# import pandas as pd
+# import json
+# import os
+#
+# data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/uniform_small_SHORT/synth_out/'
+#
+# all_times = []
+# for d in os.listdir(data_dir):
+#     with open(f"{data_dir}{d}/data_record.json", "r") as f:
+#         data = json.load(f)
+#         time = data['runtime_metrics_extraction']
+#         all_times.append(time['value'])
+#
+#
+# print(f'time: {sum(all_times) / len(all_times)}')
+#
+# df_dict2 = {}
+# for d in os.listdir(data_dir):
+#     df_dict2[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+#
+#
+#
+#
+#
+# ########################
+#
+#
+# import pandas as pd
+# import json
+# import os
+#
+# data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/uniform_small_SHORT2/synth_out/'
+#
+# all_times = []
+# for d in os.listdir(data_dir):
+#     with open(f"{data_dir}{d}/data_record.json", "r") as f:
+#         data = json.load(f)
+#         time = data['runtime_metrics_extraction']
+#         all_times.append(time['value'])
+#
+#
+# print(f'time: {sum(all_times) / len(all_times)}')
+#
+# df_dict3 = {}
+# for d in os.listdir(data_dir):
+#     df_dict3[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+#
+
+
