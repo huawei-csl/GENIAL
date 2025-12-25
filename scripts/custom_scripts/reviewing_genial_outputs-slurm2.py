@@ -41,6 +41,15 @@ print(f"Incompleted: {sum([c != 12 for c in count_list])}")
 d = suc_list[0]
 
 
+count_dic_1 = {d: c for d, c in count_dic.items() if c == 1}
+count_dic_2 = {d: c for d, c in count_dic.items() if c == 2 or c == 3}
+
+# count_1_df = pd.DataFrame([{'k': k, 'c': 1} for k in count_dic_1])
+# count_1_df.to_csv('/scratch/ramaudruz/misc/count_1_df_251224.csv', index=False)
+
+# count_23_df = pd.DataFrame([{'k': k, 'c': 1} for k in count_dic_2])
+# count_23_df.to_csv('/scratch/ramaudruz/misc/count_23_df_251224.csv', index=False)
+
 to_remove = [
     d for d in os.listdir(data_dir)
     if not os.path.isfile(f'{data_dir}{d}/flowy_data_record.parquet')
@@ -58,6 +67,10 @@ count_dic_check = {
 
 # for d in to_remove:
 #     shutil.rmtree(f'{data_dir}{d}')
+
+new_to_delete = [d for d in os.listdir(data_dir) if (len(os.listdir(f'{data_dir}{d}')) == 0) or not os.path.isfile(f'{data_dir}{d}/flowy_data_record.parquet')]
+for d in new_to_delete:
+    shutil.rmtree(f'{data_dir}{d}')
 
 
 df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')

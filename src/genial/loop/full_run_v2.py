@@ -53,8 +53,8 @@ class SlurmDispatcher:
         "aime01",
         "aime02",
         "aime03",
-        # "epyc01",
-        # "epyc02",
+        "epyc01",
+        "epyc02",
     ]
 
     __valid_work_dirpath__ = [
@@ -77,13 +77,13 @@ class SlurmDispatcher:
         # "merge": "AI-CPU,Zen3",
         # "clean": "AI-CPU,Zen3",
 
-        "generate": "AI-CPU,VNL_GPU",
-        "launch": "AI-CPU,VNL_GPU",
-        "analyze": "AI-CPU,VNL_GPU",
-        "train": "AI-CPU,VNL_GPU",
-        "recommend": "AI-CPU,VNL_GPU",
-        "merge": "AI-CPU,VNL_GPU",
-        "clean": "AI-CPU,VNL_GPU",
+        "generate": "AI-CPU,VNL_GPU,Zen3",
+        "launch": "AI-CPU,VNL_GPU,Zen3",
+        "analyze": "AI-CPU,VNL_GPU,Zen3",
+        "train": "AI-CPU,VNL_GPU,Zen3",
+        "recommend": "AI-CPU,VNL_GPU,Zen3",
+        "merge": "AI-CPU,VNL_GPU,Zen3",
+        "clean": "AI-CPU,VNL_GPU,Zen3",
     }
 
     __mem_per_cpu__ = {
@@ -92,9 +92,9 @@ class SlurmDispatcher:
     }
 
     __nodelist__ = {
-        "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03",
-        "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
-        "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
+        "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
+        "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
+        "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         "train": "aime01,aime02,aime03",
         "recommend": "aime01,aime02,aime03",
         "merge": "aisrv01,aisrv02,aisrv03",
@@ -178,7 +178,7 @@ class SlurmDispatcher:
         ]
 
         if task in ["analyze", "merge", "train", "recommend"]:
-            cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03,aime01,aime02,aime03"]
+            cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02"]
         elif task == "clean":
             # For cleaning, submit one job per available node to speed things up.
             # Filter out nodes that are not available to avoid infinite waits.
