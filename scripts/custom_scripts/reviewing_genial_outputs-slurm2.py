@@ -28,11 +28,11 @@ count_dic2 = {d: c for d, c in count_dic.items() if c == 12}
 
 count_dic3 = {d: c for d, c in count_dic.items() if c != 12}
 
-success_dir = list(count_dic2.keys())
-success_dir.sort()
-
-unsuccess_dir = list(count_dic3.keys())
-unsuccess_dir.sort()
+# success_dir = list(count_dic2.keys())
+# success_dir.sort()
+#
+# unsuccess_dir = list(count_dic3.keys())
+# unsuccess_dir.sort()
 
 
 print(f"Completed: {sum([c == 12 for c in count_list])}")
@@ -69,8 +69,8 @@ count_dic_check = {
 #     shutil.rmtree(f'{data_dir}{d}')
 
 new_to_delete = [d for d in os.listdir(data_dir) if (len(os.listdir(f'{data_dir}{d}')) == 0) or not os.path.isfile(f'{data_dir}{d}/flowy_data_record.parquet')]
-for d in new_to_delete:
-    shutil.rmtree(f'{data_dir}{d}')
+# for d in new_to_delete:
+#     shutil.rmtree(f'{data_dir}{d}')
 
 
 df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
