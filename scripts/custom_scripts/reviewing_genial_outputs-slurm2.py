@@ -40,6 +40,8 @@ print(f"Incompleted: {sum([c != 12 for c in count_list])}")
 
 d = suc_list[0]
 
+pd.Series(count_list).value_counts()
+
 
 count_dic_1 = {d: c for d, c in count_dic.items() if c == 1}
 count_dic_2 = {d: c for d, c in count_dic.items() if c == 2 or c == 3}
@@ -69,8 +71,8 @@ count_dic_check = {
 #     shutil.rmtree(f'{data_dir}{d}')
 
 new_to_delete = [d for d in os.listdir(data_dir) if (len(os.listdir(f'{data_dir}{d}')) == 0) or not os.path.isfile(f'{data_dir}{d}/flowy_data_record.parquet')]
-# for d in new_to_delete:
-#     shutil.rmtree(f'{data_dir}{d}')
+for d in new_to_delete:
+    shutil.rmtree(f'{data_dir}{d}')
 
 
 df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
