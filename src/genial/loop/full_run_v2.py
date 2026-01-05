@@ -50,22 +50,22 @@ class SlurmDispatcher:
         "aisrv01",
         "aisrv02",
         "aisrv03",
-        # "aime01",
-        # "aime02",
-        # "aime03",
-        "epyc01",
-        "epyc02",
+        "aime01",
+        "aime02",
+        "aime03",
+        # "epyc01",
+        # "epyc02",
     ]
 
     __valid_work_dirpath__ = [
         "/netscratch/aisrv01",
         "/netscratch/aisrv02",
         "/netscratch/aisrv03",
-        "/netscratch/epyc01",
-        "/netscratch/epyc02",
-        # "/netscratch/aime01",
-        # "/netscratch/aime02",
-        # "/netscratch/aime03",
+        # "/netscratch/epyc01",
+        # "/netscratch/epyc02",
+        "/netscratch/aime01",
+        "/netscratch/aime02",
+        "/netscratch/aime03",
     ]
 
     __partition__ = {
@@ -77,13 +77,21 @@ class SlurmDispatcher:
         # "merge": "AI-CPU,Zen3",
         # "clean": "AI-CPU,Zen3",
 
-        "generate": "AI-CPU,VNL_GPU,Zen3",
-        "launch": "AI-CPU,VNL_GPU,Zen3",
-        "analyze": "AI-CPU,VNL_GPU,Zen3",
-        "train": "AI-CPU,VNL_GPU,Zen3",
-        "recommend": "AI-CPU,VNL_GPU,Zen3",
-        "merge": "AI-CPU,VNL_GPU,Zen3",
-        "clean": "AI-CPU,VNL_GPU,Zen3",
+        # "generate": "AI-CPU,VNL_GPU,Zen3",
+        # "launch": "AI-CPU,VNL_GPU,Zen3",
+        # "analyze": "AI-CPU,VNL_GPU,Zen3",
+        # "train": "AI-CPU,VNL_GPU,Zen3",
+        # "recommend": "AI-CPU,VNL_GPU,Zen3",
+        # "merge": "AI-CPU,VNL_GPU,Zen3",
+        # "clean": "AI-CPU,VNL_GPU,Zen3",
+
+        "generate": "AI-CPU,VNL_GPU",
+        "launch": "AI-CPU,VNL_GPU",
+        "analyze": "AI-CPU,VNL_GPU",
+        "train": "AI-CPU,VNL_GPU",
+        "recommend": "AI-CPU,VNL_GPU",
+        "merge": "AI-CPU,VNL_GPU",
+        "clean": "AI-CPU,VNL_GPU",
     }
 
     __mem_per_cpu__ = {
@@ -92,13 +100,15 @@ class SlurmDispatcher:
     }
 
     __nodelist__ = {
-        "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
+        # "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
+        "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
-        "launch": "aisrv01,aisrv02,aisrv03,epyc01,epyc02",
+        "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         # "launch": "aisrv01,aisrv02,aisrv03",
         # "launch": "aisrv01,aisrv03",
-        "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
+        # "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
+        "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
         "train": "aime01,aime02,aime03",
         "recommend": "aime01,aime02,aime03",
         "merge": "aisrv01,aisrv02,aisrv03",
