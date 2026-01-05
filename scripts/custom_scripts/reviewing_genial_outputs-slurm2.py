@@ -77,22 +77,25 @@ for d in new_to_delete:
 
 df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
 
-
+import os
 home_dir = '/home/ramaudruz/proj/GENIAL/'
 
+home_dir = '/scratch/ramaudruz/docker/data-root/containers/'
 
-dir_list = os.listdir(home_dir)
+dir_list2 = os.listdir(home_dir)
 
 
-dir_list2 = [f for f in os.listdir(home_dir) if f.startswith('pymp')]
+# dir_list2 = [f for f in os.listdir(home_dir) if f.startswith('pymp')]
 
 print(len(dir_list2))
 
-for d in dir_list2:
+for i, d in enumerate(dir_list2):
     try:
         shutil.rmtree(f'{home_dir}{d}')
     except:
         pass
+    if i % 10 == 0:
+        print(i)
 
 
 import shutil
