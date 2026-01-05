@@ -78,6 +78,39 @@ for d in new_to_delete:
 df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
 
 
+home_dir = '/home/ramaudruz/proj/GENIAL/'
+
+
+dir_list = os.listdir(home_dir)
+
+
+dir_list2 = [f for f in os.listdir(home_dir) if f.startswith('pymp')]
+
+print(len(dir_list2))
+
+for d in dir_list2:
+    try:
+        shutil.rmtree(f'{home_dir}{d}')
+    except:
+        pass
+
+
+import shutil
+from concurrent.futures import ThreadPoolExecutor
+
+def delete_many(batch):
+    for d in batch:
+        try:
+            shutil.rmtree(f'{home_dir}{d}')
+        except:
+            pass
+
+batch_size = 50
+batches = [dir_list2[i:i+batch_size] for i in range(0, len(dir_list2), batch_size)]
+
+with ThreadPoolExecutor(max_workers=128) as pool:
+    pool.map(delete_many, batches)
+
 
 
 
