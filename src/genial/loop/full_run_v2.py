@@ -392,7 +392,7 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_script(script_path, extra_args: list[str] = None, is_dry_run=False):
-        cmd = ["ssh slurm-client", "sbatch"]
+        cmd = ["ssh", "slurm-client", "sbatch"]
         if extra_args:
             cmd += extra_args
         cmd.append(script_path)
@@ -420,7 +420,7 @@ class SlurmDispatcher:
     @staticmethod
     def submit_job(cmd: str, sbatch_args: list[str], is_dry_run=False):
         _cmd = (
-                ["ssh slurm-client", "sbatch"] +
+                ["ssh", "slurm-client", "sbatch"] +
                 sbatch_args  +
                 # ["--reservation=ai-team"] +
                 [cmd]
@@ -469,7 +469,7 @@ class SlurmDispatcher:
 
         Uses: squeue -j <id> -h -o "%T|%R"
         """
-        cmd = ["ssh slurm-client", "squeue", "-j", str(job_id), "-h", "-o", "%T|%R"]
+        cmd = ["ssh", "slurm-client", "squeue", "-j", str(job_id), "-h", "-o", "%T|%R"]
         try:
             result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
             line = result.stdout.strip().splitlines()
