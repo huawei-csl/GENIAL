@@ -1181,9 +1181,58 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
     #         5: "0101",
     #         6: "0110",
     #         7: "0111",
+    #     },
+    #     {
+    #         -8: "1100",
+    #         -7: "0010",
+    #         -6: "1010",
+    #         -5: "0001",
+    #         -4: "1001",
+    #         -3: "0100",
+    #         -2: "1111",
+    #         -1: "0111",
+    #         0: "1101",
+    #         1: "0110",
+    #         2: "1110",
+    #         3: "0101",
+    #         4: "1000",
+    #         5: "0000",
+    #         6: "1011",
+    #         7: "0011",
     #     }
     # ]
-
+    #
+    # def flip_first_two_bits(d):
+    #     return {
+    #         k: (v[1] + v[0] + v[2:])
+    #         for k, v in d.items()
+    #     }
+    #
+    # def flip_first_two_bits_n_last_two(d):
+    #     return {
+    #         k: (v[1] + v[0] + v[3] + v[2])
+    #         for k, v in d.items()
+    #     }
+    #
+    # def full_flip(d):
+    #     return {
+    #         k: (v[3] + v[2] + v[1] + v[0])
+    #         for k, v in d.items()
+    #     }
+    #
+    # def invert_bits(d):
+    #     return {
+    #         k: "".join("1" if c == "0" else "0" for c in v)
+    #         for k, v in d.items()
+    #     }
+    #
+    # tc_sme_input2 = (
+    #         tc_sme_input +
+    #         [flip_first_two_bits(d) for d in tc_sme_input] +
+    #         [flip_first_two_bits_n_last_two(d) for d in tc_sme_input] +
+    #         [full_flip(d) for d in tc_sme_input]
+    # )
+    # tc_sme_input3 = tc_sme_input2 + [invert_bits(d) for d in tc_sme_input2]
 
     out_encoding = {
         -56: '11001000', -49: '11001111', -48: '11010000', -42: '11010110', -40: '11011000', -36: '11011100',
@@ -1207,6 +1256,11 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
     # proto_encoding_dicts_list = [
     #     {'in_enc_dict': in_enc_dict_str, 'out_enc_dict': out_encoding}
     #     for in_enc_dict_str in tc_sme_input
+    # ]
+
+    # proto_encoding_dicts_list = [
+    #     {'in_enc_dict': in_enc_dict_str, 'out_enc_dict': out_encoding}
+    #     for in_enc_dict_str in tc_sme_input3
     # ]
 
     # Remove duplicates

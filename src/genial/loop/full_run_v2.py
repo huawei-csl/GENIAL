@@ -91,7 +91,7 @@ class SlurmDispatcher:
         "train": "AI-CPU,VNL_GPU",
         "recommend": "AI-CPU,VNL_GPU",
         "merge": "AI-CPU,VNL_GPU",
-        "clean": "AI-CPU,VNL_GPU",
+        "clean": "AI-CPU,AmpereGPU,AdaGPU",
     }
 
     __mem_per_cpu__ = {
