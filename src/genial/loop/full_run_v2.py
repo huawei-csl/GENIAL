@@ -50,8 +50,8 @@ class SlurmDispatcher:
         "aisrv01",
         "aisrv02",
         "aisrv03",
-        "aime01",
-        "aime02",
+        # "aime01",
+        # "aime02",
         "aime03",
         # "epyc01",
         # "epyc02",
@@ -63,8 +63,8 @@ class SlurmDispatcher:
         "/netscratch/aisrv03",
         # "/netscratch/epyc01",
         # "/netscratch/epyc02",
-        "/netscratch/aime01",
-        "/netscratch/aime02",
+        # "/netscratch/aime01",
+        # "/netscratch/aime02",
         "/netscratch/aime03",
     ]
 
@@ -103,7 +103,8 @@ class SlurmDispatcher:
         # "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
-        "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
+        # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
+        "launch": "aisrv01,aisrv02,aisrv03,aime03",
         # "launch": "aisrv01,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         # "launch": "aisrv01,aisrv02,aisrv03",
         # "launch": "aisrv01,aisrv03",
@@ -175,8 +176,8 @@ class SlurmDispatcher:
             time = "48:00:00"
 
         if task == "launch" or task == "clean":
-            time = "2:00:00"
-            _nb_workers = 24
+            time = "4:00:00"
+            _nb_workers = 10
 
         cpus_per_task = str(int(_nb_workers * 1.2))
 

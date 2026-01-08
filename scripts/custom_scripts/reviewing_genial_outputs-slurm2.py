@@ -59,14 +59,14 @@ count_dic3 = {k: v for k, v in count_dic.items() if v < 8}
 
 gen_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/'
 
-
-for d in os.listdir(gen_dir):
-    if d not in count_dic2:
-        try:
-            shutil.rmtree(gen_dir + d)
-        except:
-            print(f'Fail {d}')
-
+#
+# for d in os.listdir(gen_dir):
+#     if d not in count_dic2:
+#         try:
+#             shutil.rmtree(gen_dir + d)
+#         except:
+#             print(f'Fail {d}')
+#
 
 
 count_dic_1 = {d: c for d, c in count_dic.items() if c == 1}
