@@ -1145,6 +1145,46 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
     # input_df = pd.read_csv('/home/ramaudruz/data_dir/misc/starting_encs/swact_data_with_encoding-selected.csv')
     input_df = pd.read_csv('/home/ramaudruz/misc/swact_data_with_encoding-selected.csv')
 
+    # tc_sme_input = [
+    #     {
+    #         -8: "1000",
+    #         -7: "1001",
+    #         -6: "1010",
+    #         -5: "1011",
+    #         -4: "1100",
+    #         -3: "1101",
+    #         -2: "1110",
+    #         -1: "1111",
+    #         0: "0000",
+    #         1: "0001",
+    #         2: "0010",
+    #         3: "0011",
+    #         4: "0100",
+    #         5: "0101",
+    #         6: "0110",
+    #         7: "0111",
+    #     },
+    #     {
+    #         -8: "1000",
+    #         -7: "1111",
+    #         -6: "1110",
+    #         -5: "1101",
+    #         -4: "1100",
+    #         -3: "1011",
+    #         -2: "1010",
+    #         -1: "1001",
+    #         0: "0000",
+    #         1: "0001",
+    #         2: "0010",
+    #         3: "0011",
+    #         4: "0100",
+    #         5: "0101",
+    #         6: "0110",
+    #         7: "0111",
+    #     }
+    # ]
+
+
     out_encoding = {
         -56: '11001000', -49: '11001111', -48: '11010000', -42: '11010110', -40: '11011000', -36: '11011100',
         -35: '11011101', -32: '11100000', -30: '11100010', -28: '11100100', -25: '11100111', -24: '11101000',
@@ -1162,6 +1202,12 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
         {'in_enc_dict': eval(in_enc_dict_str), 'out_enc_dict': out_encoding}
         for in_enc_dict_str in input_df['encodings_input']
     ]
+
+
+    # proto_encoding_dicts_list = [
+    #     {'in_enc_dict': in_enc_dict_str, 'out_enc_dict': out_encoding}
+    #     for in_enc_dict_str in tc_sme_input
+    # ]
 
     # Remove duplicates
     prototype_df = pd.DataFrame([{"proto_str": str(p)} for p in proto_encoding_dicts_list])

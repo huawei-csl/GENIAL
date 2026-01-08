@@ -206,11 +206,17 @@ def get_cell_count_area_trans(
     # If a flowy data record file has been produced, extract the best transistor count and replace the value if lower.
     flowy_parquet_path = synth_design_dir_path / "flowy_data_record.parquet"
 
+    nb_transistors = -1
+
     if flowy_parquet_path.exists():
         flowy_df = pd.read_parquet(flowy_parquet_path)
         if "nb_transistors" in flowy_df.columns:
-            nb_transistors_flowy = flowy_df["nb_transistors"].min()
-            nb_transistors = min(nb_transistors, nb_transistors_flowy)
+            # nb_transistors_flowy = flowy_df["nb_transistors"].min()
+            # nb_transistors = min(nb_transistors, nb_transistors_flowy)
+
+            nb_transistors = int(
+                flowy_df.groupby('run_identifier')["nb_transistors"].min().mean()
+            )
 
     cell_count_dict["nb_transistors"] = nb_transistors
     cell_count_dict["tot_cell_area"] = tot_area
