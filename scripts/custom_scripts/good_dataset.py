@@ -606,8 +606,20 @@ for d, df in df_dict.items():
     plt.show()
 
 
+value_list = []
+value_list2 = []
 
+df2 = df[df['step'] < 6000].reset_index(drop=True)
 
+df2_gr = df2.groupby('run_identifier')['nb_transistors'].min().reset_index().sort_values(by='nb_transistors').reset_index(drop=True)
+
+for i in range(5000):
+    value_list.append(
+        df2_gr[df2_gr['run_identifier'].isin(np.random.choice(df2_gr['run_identifier'].unique(), 6, replace=False))]['nb_transistors'].mean()
+    )
+    value_list2.append(
+        df2_gr[df2_gr['run_identifier'].isin(np.random.choice(df2_gr['run_identifier'].unique(), 6, replace=False))]['nb_transistors'].iloc[:3].mean()
+    )
 
 
 

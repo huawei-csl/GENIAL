@@ -44,12 +44,26 @@ for i, d in enumerate(suc_list):
 # unsuccess_dir.sort()
 
 
-print(f"Completed: {sum([c == 12 for c in count_dic.values()])}")
-print(f"Incompleted: {sum([c != 12 for c in count_dic.values()])}")
+print(f"Completed: {sum([c == 6 for c in count_dic.values()])}")
+print(f"Incompleted: {sum([c != 6 for c in count_dic.values()])}")
+
+# print(f"Completed: {sum([c == 12 for c in count_dic.values()])}")
+# print(f"Incompleted: {sum([c != 12 for c in count_dic.values()])}")
 
 # d = suc_list[0]
 
 pd.Series(count_dic.values()).value_counts()
+
+
+for d in os.listdir(data_dir):
+    if d not in count_dic:
+        try:
+            shutil.rmtree(f'{data_dir}{d}/')
+        except:
+            print(d)
+
+
+
 
 
 count_dic2 = {k: v for k, v in count_dic.items() if v>= 8}
