@@ -641,16 +641,20 @@ df_conc = pd.concat(series_list, axis=1)
 
 ax = df_conc.plot()
 ax.set_ylim(450, 800)
+ax.get_legend().remove()
 plt.show()
 
-tc_list = ['res_00000000000011', 'res_00000000000004', 'res_00000000000017', 'res_00000000000023', 'res_00000000000016', 'res_00000000000000']
-sme_list = ['res_00000000000001', 'res_00000000000005', 'res_00000000000009']
-three_list = ['res_00000000000018', 'res_00000000000021', ]
+# tc_list = ['res_00000000000011', 'res_00000000000004', 'res_00000000000017', 'res_00000000000023', 'res_00000000000016', 'res_00000000000000', 'res_00000000000006', 'res_00000000000010']
+# sme_list = ['res_00000000000001', 'res_00000000000005', 'res_00000000000009', 'res_00000000000015', 'res_00000000000012', 'res_00000000000020', 'res_00000000000019', 'res_00000000000007']
+# three_list = ['res_00000000000018', 'res_00000000000021', 'res_00000000000014', 'res_00000000000022', 'res_00000000000008', 'res_00000000000003', 'res_00000000000002', 'res_00000000000013']
 
 
+tc_list = ['res_00000000000014', 'res_00000000000007', 'res_00000000000019', 'res_00000000000017', 'res_00000000000013', 'res_00000000000000', 'res_00000000000003', 'res_00000000000011']
+sme_list = ['res_00000000000018', 'res_00000000000022', 'res_00000000000009', 'res_00000000000004', 'res_0000000000012', 'res_00000000000021', 'res_00000000000008', 'res_00000000000002']
+three_list = ['res_00000000000010', 'res_00000000000020', 'res_00000000000005', 'res_00000000000015', 'res_00000000000001', 'res_00000000000016', 'res_00000000000023', 'res_0000000000006']
 
 
-ax = df_conc.iloc[:, 2:6].plot()
+ax = df_conc.iloc[:, 18:24].plot()
 ax.set_ylim(450, 800)
 plt.show()
 
@@ -698,3 +702,21 @@ data_df = data_df.sort_values(['type']).reset_index(drop=True)
 
 
 
+#
+# df_dict['res_00000000000020']['run_identifier'].unique().shape
+
+
+import bz2
+
+path = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/generation_out/res_00000000000020/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(path, "rt") as f:   # "rt" = read text
+    content = f.read()
+
+
+import bz2
+
+path = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/generation_out/res_00000000000009/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(path, "rt") as f:   # "rt" = read text
+    content = f.read()

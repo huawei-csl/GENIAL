@@ -64,6 +64,20 @@ for d in os.listdir(data_dir):
 
 
 
+log_dir = '/home/ramaudruz/slurm_logs/genial/sbatch_error/'
+
+log_files = os.listdir(log_dir)
+
+
+for i, f in enumerate(log_files):
+    if i % 1000 == 0:
+        print(i)
+    try:
+        os.remove(f'{log_dir}{f}')
+    except:
+        print(i)
+
+
 
 
 count_dic2 = {k: v for k, v in count_dic.items() if v>= 8}

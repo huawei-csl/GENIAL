@@ -194,7 +194,7 @@ class SlurmDispatcher:
 
         if task in ["analyze", "merge", "train", "recommend"]:
             # cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02"]
-            cmd_prefix_list += ["--nodelist=aisrv01,aisrv03,aime01,aime02,aime03,epyc01,epyc02"]
+            cmd_prefix_list += ["--nodelist=aisrv01,aisrv02,aisrv03"]
         elif task == "clean":
             # For cleaning, submit one job per available node to speed things up.
             # Filter out nodes that are not available to avoid infinite waits.
