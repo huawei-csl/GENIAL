@@ -68,15 +68,15 @@ log_dir = '/home/ramaudruz/slurm_logs/genial/sbatch_error/'
 
 log_files = os.listdir(log_dir)
 
-
-for i, f in enumerate(log_files):
-    if i % 1000 == 0:
-        print(i)
-    try:
-        os.remove(f'{log_dir}{f}')
-    except:
-        print(i)
-
+#
+# for i, f in enumerate(log_files):
+#     if i % 1000 == 0:
+#         print(i)
+#     try:
+#         os.remove(f'{log_dir}{f}')
+#     except:
+#         print(i)
+#
 
 
 
