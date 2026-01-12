@@ -101,7 +101,7 @@ class SlurmDispatcher:
 
     __nodelist__ = {
         # "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
-        "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03",
+        "generate": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv02,aisrv03,aime03",
@@ -219,7 +219,9 @@ class SlurmDispatcher:
         # if SlurmDispatcher.__partition__[task] == "AI-CPU,Zen3" and not task == "clean":
         #     # cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01,aisrv02"]
         #     pass
-
+        if SlurmDispatcher.__partition__[task] == "AI-CPU,Zen3" and not task == "clean":
+            cmd_prefix_list += ["--exclude=aime01,aime02,aime03,epyc01,epyc02"]
+            # pass
         # if node is not None:
         # cmd_prefix_list.append(f"--nodelist={node}")
         if device_ids is not None:
