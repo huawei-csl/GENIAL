@@ -50,9 +50,9 @@ class SlurmDispatcher:
         "aisrv01",
         "aisrv02",
         "aisrv03",
-        "aime01",
-        "aime02",
-        "aime03",
+        # "aime01",
+        # "aime02",
+        # "aime03",
         # "epyc01",
         # "epyc02",
     ]
@@ -63,9 +63,9 @@ class SlurmDispatcher:
         "/netscratch/aisrv03",
         # "/netscratch/epyc01",
         # "/netscratch/epyc02",
-        "/netscratch/aime01",
-        "/netscratch/aime02",
-        "/netscratch/aime03",
+        # "/netscratch/aime01",
+        # "/netscratch/aime02",
+        # "/netscratch/aime03",
     ]
 
     __partition__ = {
@@ -103,10 +103,10 @@ class SlurmDispatcher:
         # "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         "generate": "aisrv01,,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
-        "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
+        # "launch": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
         # "launch": "aisrv01,aisrv02,aisrv03,aime03",
         # "launch": "aisrv01,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
-        # "launch": "aisrv01,aisrv02,aisrv03",
+        "launch": "aisrv01,aisrv02,aisrv03",
         # "launch": "aisrv01,aisrv03",
         # "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
