@@ -624,7 +624,7 @@ import matplotlib.pyplot as plt
 
 
 df_dict = {}
-synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
+synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out_16k_done/'
 
 series_list = []
 
@@ -641,17 +641,44 @@ df_conc = pd.concat(series_list, axis=1)
 
 ax = df_conc.plot()
 ax.set_ylim(450, 800)
-ax.get_legend().remove()
+# ax.get_legend().remove()
 plt.show()
 
-# tc_list = ['res_00000000000011', 'res_00000000000004', 'res_00000000000017', 'res_00000000000023', 'res_00000000000016', 'res_00000000000000', 'res_00000000000006', 'res_00000000000010']
-# sme_list = ['res_00000000000001', 'res_00000000000005', 'res_00000000000009', 'res_00000000000015', 'res_00000000000012', 'res_00000000000020', 'res_00000000000019', 'res_00000000000007']
-# three_list = ['res_00000000000018', 'res_00000000000021', 'res_00000000000014', 'res_00000000000022', 'res_00000000000008', 'res_00000000000003', 'res_00000000000002', 'res_00000000000013']
+# df_dict = {}
+# synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
+#
+# series_list = []
+#
+# for d in os.listdir(synth_out):
+#     try:
+#         df_dict[d] = pd.read_parquet(synth_out + d + '/flowy_data_record.parquet')
+#         df_dict[d]['cummin'] = df_dict[d].groupby("run_identifier")['nb_transistors'].cummin()
+#
+#         df_gr = df_dict[d].groupby('step')['cummin'].min().reset_index().rename(columns={'nb_transistors': d}).set_index('step')
+#         series_list.append(df_gr)
+#     except:
+#         print(f'skip {d}')
+#
+# df_conc = pd.concat(series_list, axis=1)
+#
 
 
-tc_list = ['res_00000000000014', 'res_00000000000007', 'res_00000000000019', 'res_00000000000017', 'res_00000000000013', 'res_00000000000000', 'res_00000000000003', 'res_00000000000011']
-sme_list = ['res_00000000000018', 'res_00000000000022', 'res_00000000000009', 'res_00000000000004', 'res_0000000000012', 'res_00000000000021', 'res_00000000000008', 'res_00000000000002']
-three_list = ['res_00000000000010', 'res_00000000000020', 'res_00000000000005', 'res_00000000000015', 'res_00000000000001', 'res_00000000000016', 'res_00000000000023', 'res_0000000000006']
+
+
+
+ax = df_conc.plot()
+ax.set_ylim(300, 500)
+# ax.get_legend().remove()
+plt.show()
+
+tc_list = ['res_00000000000011', 'res_00000000000004', 'res_00000000000017', 'res_00000000000023', 'res_00000000000016', 'res_00000000000000', 'res_00000000000006', 'res_00000000000010']
+sme_list = ['res_00000000000001', 'res_00000000000005', 'res_00000000000009', 'res_00000000000015', 'res_00000000000012', 'res_00000000000020', 'res_00000000000019', 'res_00000000000007']
+three_list = ['res_00000000000018', 'res_00000000000021', 'res_00000000000014', 'res_00000000000022', 'res_00000000000008', 'res_00000000000003', 'res_00000000000002', 'res_00000000000013']
+
+
+# tc_list = ['res_00000000000014', 'res_00000000000007', 'res_00000000000019', 'res_00000000000017', 'res_00000000000013', 'res_00000000000000', 'res_00000000000003', 'res_00000000000011']
+# sme_list = ['res_00000000000018', 'res_00000000000022', 'res_00000000000009', 'res_00000000000004', 'res_0000000000012', 'res_00000000000021', 'res_00000000000008', 'res_00000000000002']
+# three_list = ['res_00000000000010', 'res_00000000000020', 'res_00000000000005', 'res_00000000000015', 'res_00000000000001', 'res_00000000000016', 'res_00000000000023', 'res_0000000000006']
 
 
 ax = df_conc.iloc[:, 18:24].plot()
