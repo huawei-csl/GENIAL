@@ -49,3 +49,4 @@ def find_active_volumes():
 # Run the function
 if __name__ == "__main__":
     find_active_volumes()
+    client.containers.prune()

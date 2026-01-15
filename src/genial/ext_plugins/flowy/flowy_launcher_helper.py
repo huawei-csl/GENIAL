@@ -267,6 +267,47 @@ class FlowyLauncherHelper:
                 else:
                     logger.warning(f"Could not find {path} in {best_data_path}")
 
+
+        def collect_output_txts(temp_dir: str | Path, out_file: str | Path) -> None:
+            """
+            Collect all `output.txt` files from:
+                temp_dir/output/db/genial/data_collection/*/output.txt
+            and write them into `out_file` as:
+
+                <dirname>:
+                <content>
+
+                <dirname>:
+                <content>
+                ...
+            """
+            temp_dir = Path(temp_dir)
+            out_file = Path(out_file)
+
+            pattern = temp_dir / "output" / "db" / "genial" / "data_collection" / "*" / "output.txt"
+            files = sorted(pattern.parent.parent.glob("*/output.txt"))  # one-level directories only
+
+            # Alternatively, simpler:
+            # files = sorted((temp_dir / "output/db/genial/data_collection").glob("*/output.txt"))
+
+            out_file.parent.mkdir(parents=True, exist_ok=True)
+
+            with out_file.open("w", encoding="utf-8") as out:
+                for f in files:
+                    # Use the one-level directory name as "filename" label (more informative than just "output.txt")
+                    label = "output.txt content of run " + f.parent.name
+
+                    try:
+                        content = f.read_text(encoding="utf-8", errors="replace")
+                    except OSError as e:
+                        content = f"[ERROR reading file: {e}]"
+
+                    out.write(f"{label}:\n")
+                    out.write(content.rstrip("\n"))
+                    out.write("\n\n")  # blank line between entries
+
+        collect_output_txts(flowy_tmp_dir.name, self.design_output_dir_path / "all_outputs.txt")
+
         # Restoring environment (in case this was not launched from a subprocess)
         os.environ["SRC_DIR"] = original_src_dir
         if original_data_dir is not None:

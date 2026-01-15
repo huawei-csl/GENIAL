@@ -624,7 +624,9 @@ import matplotlib.pyplot as plt
 
 
 df_dict = {}
-synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out_16k_done/'
+# synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out_16k_done/'
+synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
+
 
 series_list = []
 
@@ -644,31 +646,31 @@ ax.set_ylim(450, 800)
 # ax.get_legend().remove()
 plt.show()
 
-# df_dict = {}
-# synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
-#
-# series_list = []
-#
-# for d in os.listdir(synth_out):
-#     try:
-#         df_dict[d] = pd.read_parquet(synth_out + d + '/flowy_data_record.parquet')
-#         df_dict[d]['cummin'] = df_dict[d].groupby("run_identifier")['nb_transistors'].cummin()
-#
-#         df_gr = df_dict[d].groupby('step')['cummin'].min().reset_index().rename(columns={'nb_transistors': d}).set_index('step')
-#         series_list.append(df_gr)
-#     except:
-#         print(f'skip {d}')
-#
-# df_conc = pd.concat(series_list, axis=1)
-#
+df_dict = {}
+synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
+
+series_list = []
+
+for d in os.listdir(synth_out):
+    try:
+        df_dict[d] = pd.read_parquet(synth_out + d + '/flowy_data_record.parquet')
+        df_dict[d]['cummin'] = df_dict[d].groupby("run_identifier")['nb_transistors'].cummin()
+
+        df_gr = df_dict[d].groupby('step')['cummin'].min().reset_index().rename(columns={'nb_transistors': d}).set_index('step')
+        series_list.append(df_gr)
+    except:
+        print(f'skip {d}')
+
+df_conc = pd.concat(series_list, axis=1)
+
 
 
 
 
 
 ax = df_conc.plot()
-ax.set_ylim(300, 500)
-# ax.get_legend().remove()
+ax.set_ylim(350, 425)
+ax.get_legend().remove()
 plt.show()
 
 tc_list = ['res_00000000000011', 'res_00000000000004', 'res_00000000000017', 'res_00000000000023', 'res_00000000000016', 'res_00000000000000', 'res_00000000000006', 'res_00000000000010']

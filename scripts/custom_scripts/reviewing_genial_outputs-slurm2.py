@@ -54,13 +54,13 @@ print(f"Incompleted: {sum([c != 6 for c in count_dic.values()])}")
 
 pd.Series(count_dic.values()).value_counts()
 
-
-for d in os.listdir(data_dir):
-    if d not in count_dic:
-        try:
-            shutil.rmtree(f'{data_dir}{d}/')
-        except:
-            print(d)
+#
+# for d in os.listdir(data_dir):
+#     if d not in count_dic:
+#         try:
+#             shutil.rmtree(f'{data_dir}{d}/')
+#         except:
+#             print(d)
 
 
 
@@ -343,6 +343,88 @@ to_delete = [d for d in gen_dir_all if d not in to_keep_set]
 
 for d in to_delete:
     shutil.rmtree(f'{gen_dir}/{d}')
+
+
+
+min_mean_dic = {}
+
+for i, d in enumerate(suc_list):
+    if i % 100 == 0:
+        print(i)
+    min_mean_dic[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet').groupby('run_identifier')['nb_transistors'].min().mean()
+
+
+df_analysis = pd.DataFrame([{'d': k, 'min_mean': v} for k, v in min_mean_dic.items()]).sort_values('min_mean').reset_index(drop=True)
+
+
+
+pd.read_parquet(f'{data_dir}{"res_00000000021816"}/flowy_data_record.parquet')['run_identifier'].unique().shape
+
+
+f2 = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/res_00000000021816/hdl/mydesign_comb.v.bz2'
+
+
+
+import bz2
+
+path = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/generation_out/res_00000000000009/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(f2, "rt") as f:   # "rt" = read text
+    content = f.read()
+
+
+
+################################
+
+
+count_dic2 = {k: v for k, v in count_dic.items() if v ==6}
+
+
+
+df_dic = {}
+
+for d in count_dic2:
+    df_dic[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet').groupby('run_identifier')['nb_transistors'].min().reset_index()
+
+import numpy as np
+data_list = []
+
+for df in df_dic.values():
+    data_list.append({
+        'val': df['nb_transistors'].mean(),
+        'std': df['nb_transistors'].std(),
+        'log_val': pd.Series(np.log(df['nb_transistors'])).mean(),
+        'log_std': pd.Series(np.log(df['nb_transistors'])).std(),
+    })
+
+df_std = pd.DataFrame(data_list).sort_values('val').reset_index(drop=True)
+
+
+df_std.plot.scatter('val', 'std')
+
+import matplotlib.pyplot as plt
+plt.show()
+
+
+df_std.plot.scatter('log_val', 'log_std')
+
+import matplotlib.pyplot as plt
+plt.show()
+
+
+import numpy as np
+data_list = []
+
+for df in df_dic.values():
+    rolling = df['nb_transistors'].rolling(200).mean()
+
+    data_list.append({
+        'val': df['nb_transistors'].mean(),
+        'std': df['nb_transistors'].std(),
+        'log_val': pd.Series(np.log(df['nb_transistors'])).mean(),
+        'log_std': pd.Series(np.log(df['nb_transistors'])).std(),
+        'rolling_5000': None
+    })
 
 
 
