@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 
 # Initialize the Docker client
-client = docker.from_env()
+client = docker.from_env(timeout=6000)
 
 
 def remove_bound_directory(volume_name):
