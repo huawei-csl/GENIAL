@@ -625,7 +625,7 @@ import matplotlib.pyplot as plt
 
 df_dict = {}
 # synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out_16k_done/'
-synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
+synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out_32k_partial/'
 
 
 series_list = []
@@ -749,3 +749,59 @@ path = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8b
 
 with bz2.open(path, "rt") as f:   # "rt" = read text
     content = f.read()
+
+
+
+
+
+df_dict = {}
+# synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out_16k_done/'
+# synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/new_candidate/synth_out/'
+synth_out = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
+
+series_list = []
+
+for d in os.listdir(synth_out):
+    try:
+        df_dict[d] = pd.read_parquet(synth_out + d + '/flowy_data_record.parquet')
+        df_gr = df_dict[d].groupby('step')['nb_transistors'].mean().reset_index().rename(columns={'nb_transistors': d}).set_index('step')
+        series_list.append(df_gr)
+    except:
+        print(f'skip {d}')
+
+
+
+df_conc = pd.concat(series_list, axis=1)
+
+
+
+
+
+
+ax = df_conc.plot()
+# ax.set_ylim(450, 650)
+ax.get_legend().remove()
+plt.show()
+
+
+for df in df_dict.values():
+    print(df['nb_transistors'].min())
+
+
+
+df_temp = df_dict['res_00000000000004']
+
+
+
+df_temp['step_cat'] = -1
+
+for i in range(0, df_temp['step'].max()+1, 1000):
+    cond = (df_temp['step'] < i) & (df_temp['step_cat'] == -1)
+    df_temp.loc[cond, 'step_cat'] = i
+
+
+df_gr = df_temp.groupby(['run_identifier', 'step_cat'])['nb_transistors'].min().reset_index()
+
+
+df_gr2 = df_gr.groupby('step_cat').agg({'nb_transistors': ('min', 'mean', 'max', 'std')}).reset_index().sort_values('step_cat').reset_index(drop=True)
+

@@ -2,7 +2,8 @@
 import os
 import shutil
 from concurrent.futures.thread import ThreadPoolExecutor
-
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -15,6 +16,13 @@ suc_list = [d for d in os.listdir(data_dir) if len(os.listdir(f'{data_dir}{d}'))
 suc_list.sort()
 
 # print(suc_list)
+
+
+
+# file_set = set()
+#
+# for s in suc_list:
+#     file_set.update(os.listdir(f'{data_dir}{s}'))
 
 
 # df = pd.read_parquet('/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out/res_00000000000000/flowy_data_record.parquet')
@@ -402,31 +410,78 @@ df_std = pd.DataFrame(data_list).sort_values('val').reset_index(drop=True)
 
 df_std.plot.scatter('val', 'std')
 
-import matplotlib.pyplot as plt
 plt.show()
 
 
 df_std.plot.scatter('log_val', 'log_std')
 
-import matplotlib.pyplot as plt
 plt.show()
 
 
-import numpy as np
+
 data_list = []
 
 for df in df_dic.values():
     rolling = df['nb_transistors'].rolling(200).mean()
+
+    break
 
     data_list.append({
         'val': df['nb_transistors'].mean(),
         'std': df['nb_transistors'].std(),
         'log_val': pd.Series(np.log(df['nb_transistors'])).mean(),
         'log_std': pd.Series(np.log(df['nb_transistors'])).std(),
-        'rolling_5000': None
+        'rolling_5000': rolling.iloc[-1000],
+        'rolling_6000': rolling.iloc[-1],
     })
 
 
 
+##################
 
+data_list = []
+df_dic = {}
+
+for d in count_dic2:
+    df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+    df_gr = df.groupby('run_identifier')['nb_transistors'].min().reset_index()
+
+    rolling = df.groupby('step')['nb_transistors'].mean().reset_index()['nb_transistors'].rolling(200).mean()
+
+    data_list.append({
+        'd': d,
+        'val': df_gr['nb_transistors'].mean(),
+        'std': df_gr['nb_transistors'].std(),
+        'log_val': pd.Series(np.log(df_gr['nb_transistors'])).mean(),
+        'log_std': pd.Series(np.log(df_gr['nb_transistors'])).std(),
+        'rolling_5000': rolling.iloc[-1000],
+        'rolling_6000': rolling.iloc[-1],
+    })
+
+
+
+df_new = pd.DataFrame(data_list).sort_values('val').reset_index(drop=True)
+
+
+res_00000000013837 = pd.read_parquet(f'{data_dir}res_00000000013837/flowy_data_record.parquet')
+
+
+
+res_00000000013837_conc = pd.concat([
+    res_00000000013837[res_00000000013837['run_identifier'] == r].reset_index(drop=True)['nb_transistors'].rolling(100).min()
+    for r in res_00000000013837['run_identifier'].unique()
+], axis=1)
+
+
+ax = res_00000000013837_conc.plot()
+ax.set_ylim(400, 800)
+plt.show()
+
+
+import bz2
+
+path = "/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/res_00000000013837/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(path, "rt") as f:   # "rt" = read text
+    content = f.read()
 

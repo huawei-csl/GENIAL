@@ -1143,7 +1143,7 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
     logger.warning(gener_dir_config.root_output_dir)
 
     # input_df = pd.read_csv('/home/ramaudruz/data_dir/misc/starting_encs/swact_data_with_encoding-selected.csv')
-    input_df = pd.read_csv('/home/ramaudruz/misc/swact_data_with_encoding-selected.csv')
+    # input_df = pd.read_csv('/home/ramaudruz/misc/swact_data_with_encoding-selected.csv')
 
     # tc_sme_input = [
     #     {
@@ -1201,38 +1201,64 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
     #         7: "0011",
     #     }
     # ]
-    #
-    # def flip_first_two_bits(d):
-    #     return {
-    #         k: (v[1] + v[0] + v[2:])
-    #         for k, v in d.items()
-    #     }
-    #
-    # def flip_first_two_bits_n_last_two(d):
-    #     return {
-    #         k: (v[1] + v[0] + v[3] + v[2])
-    #         for k, v in d.items()
-    #     }
-    #
-    # def full_flip(d):
-    #     return {
-    #         k: (v[3] + v[2] + v[1] + v[0])
-    #         for k, v in d.items()
-    #     }
-    #
-    # def invert_bits(d):
-    #     return {
-    #         k: "".join("1" if c == "0" else "0" for c in v)
-    #         for k, v in d.items()
-    #     }
-    #
-    # tc_sme_input2 = (
-    #         tc_sme_input +
-    #         [flip_first_two_bits(d) for d in tc_sme_input] +
-    #         [flip_first_two_bits_n_last_two(d) for d in tc_sme_input] +
-    #         [full_flip(d) for d in tc_sme_input]
-    # )
-    # tc_sme_input3 = tc_sme_input2 + [invert_bits(d) for d in tc_sme_input2]
+
+
+    tc_sme_input = [
+        {
+            -8: "1010",
+            -7: "0110",
+            -6: "1100",
+            -5: "0100",
+            -4: "1101",
+            -3: "0101",
+            -2: "1111",
+            -1: "0111",
+            0: "1110",
+            1: "0011",
+            2: "1011",
+            3: "0001",
+            4: "1001",
+            5: "0000",
+            6: "1000",
+            7: "0010",
+        }
+    ]
+
+
+
+
+
+    def flip_first_two_bits(d):
+        return {
+            k: (v[1] + v[0] + v[2:])
+            for k, v in d.items()
+        }
+
+    def flip_first_two_bits_n_last_two(d):
+        return {
+            k: (v[1] + v[0] + v[3] + v[2])
+            for k, v in d.items()
+        }
+
+    def full_flip(d):
+        return {
+            k: (v[3] + v[2] + v[1] + v[0])
+            for k, v in d.items()
+        }
+
+    def invert_bits(d):
+        return {
+            k: "".join("1" if c == "0" else "0" for c in v)
+            for k, v in d.items()
+        }
+
+    tc_sme_input2 = (
+            tc_sme_input +
+            [flip_first_two_bits(d) for d in tc_sme_input] +
+            [flip_first_two_bits_n_last_two(d) for d in tc_sme_input] +
+            [full_flip(d) for d in tc_sme_input]
+    )
+    tc_sme_input3 = tc_sme_input2 + [invert_bits(d) for d in tc_sme_input2]
 
     out_encoding = {
         -56: '11001000', -49: '11001111', -48: '11010000', -42: '11010110', -40: '11011000', -36: '11011100',
@@ -1247,10 +1273,10 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
         64: '01000000'
     }
 
-    proto_encoding_dicts_list = [
-        {'in_enc_dict': eval(in_enc_dict_str), 'out_enc_dict': out_encoding}
-        for in_enc_dict_str in input_df['encodings_input']
-    ]
+    # proto_encoding_dicts_list = [
+    #     {'in_enc_dict': eval(in_enc_dict_str), 'out_enc_dict': out_encoding}
+    #     for in_enc_dict_str in input_df['encodings_input']
+    # ]
 
 
     # proto_encoding_dicts_list = [
@@ -1258,10 +1284,10 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
     #     for in_enc_dict_str in tc_sme_input
     # ]
 
-    # proto_encoding_dicts_list = [
-    #     {'in_enc_dict': in_enc_dict_str, 'out_enc_dict': out_encoding}
-    #     for in_enc_dict_str in tc_sme_input3
-    # ]
+    proto_encoding_dicts_list = [
+        {'in_enc_dict': in_enc_dict_str, 'out_enc_dict': out_encoding}
+        for in_enc_dict_str in tc_sme_input3
+    ]
 
     # Remove duplicates
     prototype_df = pd.DataFrame([{"proto_str": str(p)} for p in proto_encoding_dicts_list])
