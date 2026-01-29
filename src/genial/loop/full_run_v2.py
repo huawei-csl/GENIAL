@@ -48,16 +48,16 @@ class SlurmDispatcher:
 
     __valid_nodes__ = [
         # "aisrv01",
-        # "aisrv02",
-        "aisrv03",
+        "aisrv02",
+        #"aisrv03",
         # "epyc01",
         # "epyc02",
     ]
 
     __valid_work_dirpath__ = [
         # "/netscratch/aisrv01",
-        # "/netscratch/aisrv02",
-        "/netscratch/aisrv03",
+        "/netscratch/aisrv02",
+        #"/netscratch/aisrv03",
         # "/netscratch/epyc01",
         # "/netscratch/epyc02",
     ]
@@ -77,13 +77,22 @@ class SlurmDispatcher:
         "VNL_GPU": "2G",
     }
 
+    # __nodelist__ = {
+    #     "generate": "aisrv01,aisrv03",
+    #     "launch": "aisrv01,aisrv03",
+    #     "analyze": "aisrv01,aisrv03",
+    #     "train": "aime01,aime02,aime03",
+    #     "recommend": "aime01,aime02,aime03",
+    #     "merge": "aisrv01,aisrv03",
+    # }
+    
     __nodelist__ = {
-        "generate": "aisrv01,aisrv03",
-        "launch": "aisrv01,aisrv03",
-        "analyze": "aisrv01,aisrv03",
+        "generate": "aisrv02",
+        "launch": "aisrv02",
+        "analyze": "aisrv02",
         "train": "aime01,aime02,aime03",
         "recommend": "aime01,aime02,aime03",
-        "merge": "aisrv01,aisrv03",
+        "merge": "aisrv02",
     }
 
     __can_multi_node__ = {
@@ -157,13 +166,14 @@ class SlurmDispatcher:
             f"--time={time}",
             # "--ntasks=1",
             f"--mem-per-cpu=2G",
+            f"--nodelist=aisrv02",
             "--partition=" + SlurmDispatcher.__partition__[task],
             f"--cpus-per-task={cpus_per_task}",
             # "--nodelist=" + SlurmDispatcher.__nodelist__[task],
         ]
 
         if task in ["analyze", "merge", "train", "recommend"]:
-            cmd_prefix_list += ["--nodelist=aisrv03"]
+            cmd_prefix_list += ["--nodelist=aisrv02"]
         elif task == "clean":
             # For cleaning, submit one job per available node to speed things up.
             # Filter out nodes that are not available to avoid infinite waits.
@@ -186,7 +196,7 @@ class SlurmDispatcher:
         # if SlurmDispatcher.__partition__[task] == "VNL_GPU":
         # cmd_prefix_list += ["--exclude=aime02,aime01"]
         if SlurmDispatcher.__partition__[task] == "AI-CPU,Zen3" and not task == "clean":
-            cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01,aisrv02"]
+            cmd_prefix_list += ["--exclude=epyc01,epyc02,aisrv01"]
             # pass
 
         # if node is not None:
