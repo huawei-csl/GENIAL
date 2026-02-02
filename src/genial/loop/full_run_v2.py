@@ -207,7 +207,23 @@ class SlurmDispatcher:
                 if set(available_nodes) != set(SlurmDispatcher.__valid_nodes__):
                     skipped = list(set(SlurmDispatcher.__valid_nodes__) - set(available_nodes))
                     logger.warning(f"Skipping unavailable nodes for clean task: {sorted(skipped)}")
-            cmd_prefix_list = [cmd_prefix_list + [f"--nodelist={node}"] for node in available_nodes]
+            # cmd_prefix_list = [cmd_prefix_list + [f"--nodelist={node}"] for node in available_nodes]
+            partition_map = {
+                'aisrv01': 'AI-CPU',
+                'aisrv02': 'AI-CPU',
+                'aisrv03': 'AI-CPU',
+                'epyc01': 'Zen3',
+                'epyc02': 'Zen3',
+            }
+            new_cmd_prefix_list = []
+            for node in available_nodes:
+                cmd_prefix_list_updated = [
+                    f"--partition={partition_map[node]}" if s.startswith('--partition=') else s for s in cmd_prefix_list
+                ]
+                new_cmd_prefix_list.append(
+                    cmd_prefix_list_updated + [f"--nodelist={node}"]
+                )
+            cmd_prefix_list = new_cmd_prefix_list
 
         # if task == "launch":
         #     cmd_prefix_list += (f"--cpus-per-task={str(int(24 * 1.5))}",)  # Use a margin of 1.5 - just to make sure.
@@ -430,8 +446,8 @@ class SlurmDispatcher:
                 ["sbatch"] +
                 sbatch_args  +
                 # ["--reservation=ai-team"] +
-                ["--account=huawei"] +
-                ["--qos=normal"] +
+                # ["--account=huawei"] +
+                # ["--qos=normal"] +
                 [cmd]
         )
 
