@@ -62,13 +62,13 @@ print(f"Incompleted: {sum([c != 6 for c in count_dic.values()])}")
 
 pd.Series(count_dic.values()).value_counts()
 
-#
-# for d in os.listdir(data_dir):
-#     if d not in count_dic:
-#         try:
-#             shutil.rmtree(f'{data_dir}{d}/')
-#         except:
-#             print(d)
+
+for d in os.listdir(data_dir):
+    if d not in count_dic:
+        try:
+            shutil.rmtree(f'{data_dir}{d}/')
+        except:
+            print(d)
 
 
 
