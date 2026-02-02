@@ -430,6 +430,8 @@ class SlurmDispatcher:
                 ["sbatch"] +
                 sbatch_args  +
                 # ["--reservation=ai-team"] +
+                ["--account=huawei"] +
+                ["--qos=normal"] +
                 [cmd]
         )
 
