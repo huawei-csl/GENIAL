@@ -230,8 +230,8 @@ class SlurmDispatcher:
                         # write std output into a temp file with >
                 
                 # make sure logs directory exists
-                #Path(os.environ.get("DATA_DIR")).joinpath("logs").mkdir(parents=True, exist_ok=True)
-                #_cmd += f" > {Path(os.environ.get("DATA_DIR")) / "logs" / (Path(script_object.name).name + ".out")} 2> {Path(os.environ.get("DATA_DIR")) / "logs" / (Path(script_object.name).name + ".err")}"
+                Path(os.environ.get("DATA_DIR")).joinpath("logs").mkdir(parents=True, exist_ok=True)
+                _cmd += f" &> {Path(os.environ.get("DATA_DIR")) / "logs" / (Path(script_object.name).name + ".out")}"
 
                 script_content = template.substitute(
                     {
@@ -503,82 +503,170 @@ class SlurmDispatcher:
 
         logger.info("All jobs done!")
         return any_errors
-
+    
     @staticmethod
     def update_design_number_list(script_path: Path):
-        """Update the design number list in the script with the current design number list"""
+        """Update the --design_number_list in a generated SLURM script.
+
+        This version is robust to shell redirections appended to the command, e.g.
+            ... --design_number_list 1 2 3 > out.log 2> err.log
+        It only replaces the *argument list* of --design_number_list (not every
+        occurrence of the design numbers in the whole script).
+        """
         global_vars["keep_not_valid"] = True
         script_path = Path(script_path)
         if not script_path.exists():
             return
 
-        with open(script_path, "r") as f:
-            script = f.read()
+        script = script_path.read_text()
 
-        skipped_steps = set()
-        if "--design_number_list" in script:
-            for line in script.splitlines():
-                if "--design_number_list" in line:
-                    design_number_list = line.split("--design_number_list")[1].strip().split()
+        flag = "--design_number_list"
+        if flag not in script:
+            return -1
 
-                if "--skip_" in line:
-                    step_name = line.split("--skip_")[1].strip().split()[0]
-                    skipped_steps.add(step_name)
+        def _split_line_ending(line: str) -> tuple[str, str]:
+            if line.endswith("\r\n"):
+                return line[:-2], "\r\n"
+            if line.endswith("\n"):
+                return line[:-1], "\n"
+            if line.endswith("\r"):
+                return line[:-1], "\r"
+            return line, ""
 
-                if "--experiment_name" in line:
-                    experiment_name = line.split("--experiment_name")[1].strip().split()[0]
+        def _extract_dn_span(after_flag: str) -> tuple[list[str], int, int]:
+            """Return (design_numbers, start_idx, end_idx) within `after_flag`."""
+            # Tokenize by contiguous non-whitespace, keeping spans
+            matches = list(re.finditer(r"\S+", after_flag))
+            dn_spans: list[tuple[int, int]] = []
 
-                if "--output_dir_name" in line:
-                    output_dir_name = line.split("--output_dir_name")[1].strip().split()[0]
+            # Tokens that definitely terminate the design list
+            terminators = {
+                ">", ">>", "1>", "1>>", "2>", "2>>", "&>", "2>&1", "1>&2",
+                "|", "||", "&&", ";",
+            }
 
-                if "--bulk_flow_dirname" in line:
-                    bulk_flow_dirname = line.split("--bulk_flow_dirname")[1].strip().split()[0]
+            for m in matches:
+                tok = m.group(0)
+
+                # Stop when we hit another CLI flag, a redirection/pipe operator, etc.
+                if tok.startswith("-") or tok in terminators or tok.startswith(">") or tok.endswith(">"):
+                    break
+
+                # Accept only pure numeric design numbers (keeps leading zeros)
+                if re.fullmatch(r"\d+", tok):
+                    dn_spans.append(m.span())
                 else:
-                    if "flowy" in line:
-                        bulk_flow_dirname = "synth_out"
-                    else:
-                        bulk_flow_dirname = None
+                    # First non-numeric token ends the list (e.g., a path, or '>' if glued)
+                    break
 
-            root_dirpath = ConfigDir.get_root_dirpath(experiment_name, output_dir_name)
-            dir_config = SimpleNamespace(
-                root_output_dir=root_dirpath,
-                bulk_flow_dirname=bulk_flow_dirname,
+            if not dn_spans:
+                # No numeric tokens: insert position is before the first non-space token (or end)
+                m_first = re.search(r"\S", after_flag)
+                pos = m_first.start() if m_first else len(after_flag)
+                return [], pos, pos
+
+            start = dn_spans[0][0]
+            end = dn_spans[-1][1]
+            dn_list = after_flag[start:end].split()
+            return dn_list, start, end
+
+        # Parse required metadata + locate the exact line/segment to replace
+        skipped_steps = set()
+        experiment_name = None
+        output_dir_name = None
+        bulk_flow_dirname = None
+
+        lines = script.splitlines(keepends=True)
+
+        dn_line_idx = None
+        dn_line_prefix = None
+        dn_line_after = None
+        dn_span = None  # (start,end) within dn_line_after
+        design_number_list = None
+        dn_line_ending = ""
+
+        for idx, raw_line in enumerate(lines):
+            line, ending = _split_line_ending(raw_line)
+
+            if flag in line and dn_line_idx is None:
+                prefix, after = line.split(flag, 1)
+                dn_list, start, end = _extract_dn_span(after)
+                dn_line_idx = idx
+                dn_line_prefix = prefix
+                dn_line_after = after
+                dn_span = (start, end)
+                design_number_list = dn_list
+                dn_line_ending = ending
+
+            if "--skip_" in line:
+                step_name = line.split("--skip_", 1)[1].strip().split()[0]
+                skipped_steps.add(step_name)
+
+            if experiment_name is None and "--experiment_name" in line:
+                experiment_name = line.split("--experiment_name", 1)[1].strip().split()[0]
+
+            if output_dir_name is None and "--output_dir_name" in line:
+                output_dir_name = line.split("--output_dir_name", 1)[1].strip().split()[0]
+
+            if bulk_flow_dirname is None and "--bulk_flow_dirname" in line:
+                bulk_flow_dirname = line.split("--bulk_flow_dirname", 1)[1].strip().split()[0]
+
+        # Best-effort fallback (keeps intent but avoids per-line overwrites)
+        if bulk_flow_dirname is None and "flowy" in script:
+            bulk_flow_dirname = "synth_out"
+
+        if dn_line_idx is None or dn_line_prefix is None or dn_line_after is None or dn_span is None or design_number_list is None:
+            return -1
+        if experiment_name is None or output_dir_name is None:
+            logger.warning(f"Could not parse --experiment_name/--output_dir_name in {script_path}; skipping update.")
+            return -1
+
+        # Compute which design numbers are already valid across all non-skipped steps
+        root_dirpath = ConfigDir.get_root_dirpath(experiment_name, output_dir_name)
+        dir_config = SimpleNamespace(
+            root_output_dir=root_dirpath,
+            bulk_flow_dirname=bulk_flow_dirname,
+        )
+
+        valid_design_numbers = {}
+        for step in Analyzer.__existing_steps__:
+            if step == "gener":
+                continue
+            if step in skipped_steps:
+                continue
+            valid_design_numbers[step] = _get_list_of_valid_designs(
+                dir_config,
+                step,
+                return_types="numbers",
+                filter_design_numbers=design_number_list,
+                filter_mode="include",
             )
 
-            valid_design_numbers = {}
-            for step in Analyzer.__existing_steps__:
-                if step != "gener":
-                    if step not in skipped_steps:
-                        valid_design_numbers[step] = _get_list_of_valid_designs(
-                            dir_config,
-                            step,
-                            return_types="numbers",
-                            filter_design_numbers=design_number_list,
-                            filter_mode="include",
-                        )
+        all_valid = set(design_number_list)
+        for nums in valid_design_numbers.values():
+            all_valid &= set(nums)
 
-            all_valid_design_numbers = set(design_number_list)
-            for step in valid_design_numbers:
-                all_valid_design_numbers = all_valid_design_numbers.intersection(set(valid_design_numbers[step]))
+        # Keep stable order (and avoid duplicates like the old set()-based logic)
+        todo_design_number_list = []
+        seen = set()
+        for dn in design_number_list:
+            if dn in all_valid or dn in seen:
+                continue
+            todo_design_number_list.append(dn)
+            seen.add(dn)
 
-            todo_design_number_list = list(set(design_number_list) - all_valid_design_numbers)
+        # Replace only the numeric span after --design_number_list, keep suffix (e.g., redirections) intact
+        start, end = dn_span
+        new_list_str = " ".join(todo_design_number_list)
+        new_after = dn_line_after[:start] + new_list_str + dn_line_after[end:]
+        new_line = dn_line_prefix + flag + new_after + dn_line_ending
 
-            # new_script_l, new_script_r = script.split("--design_number_list")
-            for dn in design_number_list:
-                script = script.replace(f"{dn}", "")
+        lines[dn_line_idx] = new_line
+        script_path.write_text("".join(lines))
 
-            _todo_design_number_list = " ".join(todo_design_number_list)
-            script = script.replace("--design_number_list", f"--design_number_list {_todo_design_number_list}")
+        logger.info(f"Script {script_path} updated with new design number list: {todo_design_number_list}")
+        return len(todo_design_number_list)
 
-            # Write back updated script
-            with open(script_path, "w") as f:
-                f.write(script)
-            logger.info(f"Script {script_path} updated with new design number list: {todo_design_number_list}")
-
-            return len(todo_design_number_list)
-
-        else:
-            return -1
 
 
 def run_cmd_subprocess(cmd: str, is_dry_run: bool = False, task: str = None) -> CompletedProcess:
