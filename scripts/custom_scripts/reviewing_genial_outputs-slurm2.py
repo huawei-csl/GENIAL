@@ -67,6 +67,7 @@ for d in os.listdir(data_dir):
     if d not in count_dic:
         try:
             shutil.rmtree(f'{data_dir}{d}/')
+            print(d)
         except:
             print(d)
 
@@ -484,4 +485,20 @@ path = "/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/f
 
 with bz2.open(path, "rt") as f:   # "rt" = read text
     content = f.read()
+
+
+data_list = []
+
+count_dic2 = {k: v for k, v in count_dic.items() if v >=3}
+for d in count_dic2:
+    df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+    mean_min = df.groupby('run_identifier')['nb_transistors'].min().mean()
+    data_list.append({
+        'd': d,
+        'mean_min': mean_min,
+    })
+
+anal_df = pd.DataFrame(data_list).sort_values('mean_min').reset_index(drop=True)
+
+
 

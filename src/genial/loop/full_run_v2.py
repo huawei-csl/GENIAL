@@ -223,7 +223,8 @@ class SlurmDispatcher:
         #     pass
         if not task == "clean":
         # if SlurmDispatcher.__partition__[task] == "AI-CPU,Zen3" and not task == "clean":
-            cmd_prefix_list += ["--exclude=aime01,aime02,aime03,epyc01,epyc02"]
+        #     cmd_prefix_list += ["--exclude=aime01,aime02,aime03,epyc01,epyc02"]
+            cmd_prefix_list += ["--exclude=aime01,aime02,aime03"]
             # pass
         # if node is not None:
         # cmd_prefix_list.append(f"--nodelist={node}")
