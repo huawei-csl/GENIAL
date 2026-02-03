@@ -48,7 +48,7 @@ class SlurmDispatcher:
 
     __valid_nodes__ = [
         "aisrv01",
-        # "aisrv02",
+        "aisrv02",
         "aisrv03",
         # "aime01",
         # "aime02",
@@ -59,7 +59,7 @@ class SlurmDispatcher:
 
     __valid_work_dirpath__ = [
         "/netscratch/aisrv01",
-        # "/netscratch/aisrv02",
+        "/netscratch/aisrv02",
         "/netscratch/aisrv03",
         "/netscratch/epyc01",
         "/netscratch/epyc02",
@@ -107,8 +107,8 @@ class SlurmDispatcher:
         # "launch": "aisrv01,aisrv02,aisrv03,aime03",
         # "launch": "aisrv01,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         # "launch": "aisrv01,aisrv02,aisrv03",
-        # "launch": "aisrv01,aisrv02,aisrv03,epyc01,epyc02",
-        "launch": "aisrv01,aisrv03,epyc01,epyc02",
+        "launch": "aisrv01,aisrv02,aisrv03,epyc01,epyc02",
+        # "launch": "aisrv01,aisrv03,epyc01,epyc02",
         # "launch": "aisrv01,aisrv03",
         # "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03,epyc01,epyc02",
         "analyze": "aisrv01,aisrv02,aisrv03,aime01,aime02,aime03",
