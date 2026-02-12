@@ -77,13 +77,22 @@ class SlurmDispatcher:
         # "merge": "AI-CPU,Zen3",
         # "clean": "AI-CPU,Zen3",
 
-        "generate": "AI-CPU,VNL_GPU,Zen3",
-        "launch": "AI-CPU,VNL_GPU,Zen3",
-        "analyze": "AI-CPU,VNL_GPU,Zen3",
+        # "generate": "AI-CPU,VNL_GPU,Zen3",
+        # "launch": "AI-CPU,VNL_GPU,Zen3",
+        # "analyze": "AI-CPU,VNL_GPU,Zen3",
+        # "train": "AI-CPU,VNL_GPU,Zen3",
+        # "recommend": "AI-CPU,VNL_GPU,Zen3",
+        # "merge": "AI-CPU,VNL_GPU,Zen3",
+        # "clean": "AI-CPU,AmpereGPU,AdaGPU,Zen3",
+
+        "generate": "AI-CPU,Zen3",
+        "launch": "AI-CPU,Zen3",
+        "analyze": "AI-CPU,Zen3",
         "train": "AI-CPU,VNL_GPU,Zen3",
         "recommend": "AI-CPU,VNL_GPU,Zen3",
         "merge": "AI-CPU,VNL_GPU,Zen3",
         "clean": "AI-CPU,AmpereGPU,AdaGPU,Zen3",
+
 
         # "generate": "AI-CPU,VNL_GPU",
         # "launch": "AI-CPU,VNL_GPU",

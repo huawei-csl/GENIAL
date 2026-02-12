@@ -10,6 +10,8 @@ import pandas as pd
 data_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out/'
 
 
+# data_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_260205/'
+
 # res_list = os.listdir(data_dir)
 #
 suc_list = [d for d in os.listdir(data_dir) if len(os.listdir(f'{data_dir}{d}')) > 0]
@@ -31,6 +33,52 @@ suc_list.sort()
 # count_list = [pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] for d in suc_list]
 
 # count_dic = {d: pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0] for d in suc_list}
+
+#
+# data_list = []
+#
+# counter_i = 0
+#
+# for i, d in enumerate(suc_list):
+#     if i % 100 == 0:
+#         print(i)
+#     df = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+#     # run_time = df[df['step']==0]['runtime_full_mockturtle_step'].mean()
+#     # data_list.append({'d': d, 'run_time': run_time})
+#     # df['d'] = d
+#     # data_list.append(
+#     #     df[df['step']==0].reset_index(drop=True)
+#     # )
+#     cond = df['runtime_full_mockturtle_step'] > 1000
+#
+#     if df[cond]['run_identifier'].unique().shape[0] >= 5:
+#         data_list.append(d)
+#
+# print(counter_i)
+#
+# diff = set(os.listdir(f'{data_dir}')) - set(data_list)
+#
+# diff_list = list(diff)
+#
+# gene_out_felix = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_felix/'
+# gene_out = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/'
+#
+#
+# for d in os.listdir(gene_out_felix):
+#     if d not in diff:
+#         shutil.rmtree(f'{gene_out_felix}{d}')
+
+
+
+
+# len(os.listdir(gene_out_felix))
+#
+#
+# len(os.listdir(gene_out))
+# len(diff_list)
+#
+# df_conc = pd.concat(data_list, ignore_index=True).sort_values('runtime_full_mockturtle_step').reset_index(drop=True)
+# anal10_df = pd.DataFrame(data_list).sort_values('run_time').reset_index(drop=True)
 
 
 count_dic = {}
@@ -62,7 +110,7 @@ print(f"Incompleted: {sum([c != 6 for c in count_dic.values()])}")
 
 pd.Series(count_dic.values()).value_counts()
 
-
+counter = 0
 for d in os.listdir(data_dir):
     if d not in count_dic:
         try:
@@ -70,8 +118,21 @@ for d in os.listdir(data_dir):
             print(d)
         except:
             print(d)
+        counter += 1
+print(f"deleted {counter} files")
 
 
+
+# count_dic1 = {k: v for k, v in count_dic.items() if v ==1}
+#
+# sub_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_subset/'
+#
+# for d in os.listdir(sub_dir):
+#     if d not in count_dic1:
+#         shutil.rmtree(f'{sub_dir}{d}/')
+#         print(d)
+#
+# len(os.listdir(sub_dir))
 
 log_dir = '/home/ramaudruz/slurm_logs/genial/sbatch_error/'
 
@@ -496,9 +557,51 @@ for d in count_dic2:
     data_list.append({
         'd': d,
         'mean_min': mean_min,
+        'all_min': df['nb_transistors'].min(),
     })
 
 anal_df = pd.DataFrame(data_list).sort_values('mean_min').reset_index(drop=True)
+
+
+
+
+import bz2
+
+path = "/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/res_00000000002634/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(path, "rt") as f:   # "rt" = read text
+    content = f.read()
+
+
+
+
+
+
+import pandas as pd
+import os
+import shutil
+
+
+df_done = pd.read_parquet('/scratch/ramaudruz/misc/done_encs/synth_analysis.db.pqt')
+
+df_done['design_number2'] = 'res_' + df_done['design_number']
+
+
+gen_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/'
+
+len(os.listdir(gen_dir))
+
+
+to_delete = []
+
+for d in os.listdir(gen_dir):
+    if d in df_done['design_number2'].tolist():
+        to_delete.append(d)
+        shutil.rmtree(gen_dir + d)
+
+len(os.listdir(gen_dir))
+
+
 
 
 

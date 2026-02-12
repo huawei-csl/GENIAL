@@ -751,6 +751,19 @@ with bz2.open(path, "rt") as f:   # "rt" = read text
     content = f.read()
 
 
+import bz2
+
+path = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/generation_out/res_00000000000012/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(path, "rt") as f:   # "rt" = read text
+    content = f.read()
+
+import bz2
+
+path = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/generation_out/res_00000000000016/hdl/mydesign_comb.v.bz2"
+
+with bz2.open(path, "rt") as f:   # "rt" = read text
+    content = f.read()
 
 
 

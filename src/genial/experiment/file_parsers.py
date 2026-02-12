@@ -214,9 +214,16 @@ def get_cell_count_area_trans(
             # nb_transistors_flowy = flowy_df["nb_transistors"].min()
             # nb_transistors = min(nb_transistors, nb_transistors_flowy)
 
-            nb_transistors = int(
-                flowy_df.groupby('run_identifier')["nb_transistors"].min().mean()
-            )
+
+
+            nb_transistors = round(flowy_df.groupby('run_identifier')["nb_transistors"].min().mean())
+
+            # cond1 = flowy_df['run_identifier'].isin(flowy_df['run_identifier'].unique().tolist()[:6])
+            # cond2 = flowy_df['step'] >= 2000
+            #
+            # flowy_df2 = flowy_df[cond1 & cond2].reset_index(drop=True)
+            # nb_transistors = round(flowy_df2.groupby('run_identifier')["nb_transistors"].min().mean())
+
 
     cell_count_dict["nb_transistors"] = nb_transistors
     cell_count_dict["tot_cell_area"] = tot_area

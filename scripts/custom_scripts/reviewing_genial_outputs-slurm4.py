@@ -39,7 +39,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 import pandas as pd
 
 
-data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out/'
+data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_3007_n_flips/synth_out/'
 
 
 res_list = os.listdir(data_dir)
@@ -55,3 +55,16 @@ count_dic3 = {d: c for d, c in count_dic.items() if c != 11}
 
 print(f"Completed: {sum([c == 11 for c in count_dic.values()])}")
 print(f"Incompleted: {sum([c != 11 for c in count_dic.values()])}")
+
+
+
+df_dic = {d: pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet') for d in suc_list}
+
+min_dic = {k: v.groupby('run_identifier')['nb_transistors'].min().mean() for k, v in df_dic.items()}
+
+min_df = pd.DataFrame([{'d': k, 'mean_min': v} for k, v in min_dic.items()]).sort_values(by='mean_min').reset_index(drop=True)
+
+
+min_dic = {k: v['nb_transistors'].min() for k, v in df_dic.items()}
+
+min_df = pd.DataFrame([{'d': k, 'mean_min': v} for k, v in min_dic.items()]).sort_values(by='mean_min').reset_index(drop=True)
