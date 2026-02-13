@@ -584,6 +584,64 @@ class SslDecoder(nn.Module):
             return x.reshape(x.shape[0], -1, 2**self.encoding_bit), vae_output
 
 
+class NewSslDecoder(nn.Module):
+    def __init__(self, model_config: ModelConfig, cls_dropout=0.2):
+        """Decoder for SSL task"""
+        super().__init__()
+        # # By default, vae constraint is set to False. Updated later in __init__ method if needed.
+        # self.vae_constraint = False
+        # self.encoding_bit = model_config.encoding_width
+        self.d_model = model_config.d_model
+        # self.nb_scores = model_config.nb_scores
+        #
+        # GELU activation is used
+        self.activation = nn.GELU()
+        # # The dropout applied on the CLS token output
+        # self.dropout = nn.Dropout(cls_dropout)
+        #
+        # # Output size = nb_encodings ** 2 = (2 ** encoding_bit) ** 2 = 2 ** (encoding_bit * 2)
+        # if self.encoding_bit > 4:
+        #     output_size = 2 * (2 ** (self.encoding_bit // 2)) * (2 ** (self.encoding_bit))
+        # else:
+        #     output_size = 2 ** (self.encoding_bit * 2)
+
+        # print(output_size)
+        mid_size = int(self.d_model // 2)
+        quarter_size = int(self.d_model // 4)
+        self.output_head_0 = nn.Linear(self.d_model, mid_size)
+        self.output_head_1 = nn.Linear(mid_size, quarter_size)
+        self.bn = nn.BatchNorm1d(mid_size)
+        #
+        # if model_config.vae_constraint:
+        #     if self.nb_scores > 1:
+        #         raise NotImplementedError(f"The Decoder dose not support multi scores and vae constraints.")
+        #     self.vae_constraint = True
+        #     self.one_n_half_size = int(self.d_model * 1.5)
+        #     self.mean_var_pred_0 = nn.Linear(self.d_model, self.one_n_half_size)
+        #     self.mean_var_bn = nn.BatchNorm1d(self.one_n_half_size)
+        #     # 2 * self.d_model such that we obtain both the mean and variance prediction
+        #     self.mean_var_pred_1 = nn.Linear(self.one_n_half_size, 2 * self.d_model)
+        #
+        # logger.info(f"Initialized model with decoder type: SslDecoder")
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        #  Default situation: 1 CLS token
+        x = x[:, 0, :]
+        # Two linear layers
+        x = self.output_head_0(x)
+        x = self.bn(x)
+        x = self.activation(x)
+        x = self.output_head_1(x)
+        return torch.nn.functional.normalize(x, dim=-1)
+
+
+
+        # if self.encoding_bit > 4:
+        #     return x.reshape(x.shape[0], 2 ** (self.encoding_bit // 2), -1, 2), vae_output
+        # else:
+        #     return x.reshape(x.shape[0], -1, 2**self.encoding_bit), vae_output
+
+
 class SslDecoderWoCls(nn.Module):
     def __init__(self, model_config: ModelConfig, encoding_bit=4):
         """Decoder for SSL task"""

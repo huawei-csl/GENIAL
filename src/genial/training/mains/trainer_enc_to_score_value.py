@@ -404,6 +404,11 @@ class EncToScoreTrainer(LoopModule):
             # Setup the lightning module
             self.lit_model = LitTransformer(meta_model=model, model_config=self.model_config)
 
+            checkpoint_path = 'resources/pretrained_model/embedding/117_0.0102_000.ckpt'
+            checkpoint = torch.load(checkpoint_path, map_location=torch.device("cpu"))
+            weight_dict = {k[12:]: v for k, v in checkpoint["state_dict"].items() if "decoder." not in k}
+            self.lit_model.transformer.load_state_dict(weight_dict, strict=False)
+
             # Store some configuration parameters
             self.restored_checkpoint_path = None
             self.restored_ckpt_epoch = 0

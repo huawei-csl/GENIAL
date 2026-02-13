@@ -4,6 +4,7 @@
 #
 # This software is released under the BSD 3-Clause Clear License.
 # See the LICENSE file in the project root for full license information (https://github.com/huawei-csl/GENIAL).
+import itertools
 
 from loguru import logger
 from copy import deepcopy
@@ -144,21 +145,50 @@ class SwactedDesignDatamodule(L.LightningDataModule):
         else:
             pass
 
+    # def train_dataloader(self):
+    #     return DataLoader(
+    #         self.dataset_train,
+    #         batch_size=self.batch_size,
+    #         shuffle=self.shuffle,
+    #         num_workers=self.nb_workers,
+    #         persistent_workers=self.persitent_workers,
+    #         pin_memory=True,
+    #     )
+    #
+    # def val_dataloader(self):
+    #     return DataLoader(self.dataset_valid, batch_size=self.batch_size, shuffle=False, num_workers=self.nb_workers)
+    #
+    # def test_dataloader(self):
+    #     return DataLoader(self.dataset_test, batch_size=self.batch_size, shuffle=False, num_workers=self.nb_workers)
+
     def train_dataloader(self):
         return DataLoader(
             self.dataset_train,
             batch_size=self.batch_size,
             shuffle=self.shuffle,
+            collate_fn=collate_fn,
             num_workers=self.nb_workers,
             persistent_workers=self.persitent_workers,
             pin_memory=True,
         )
 
     def val_dataloader(self):
-        return DataLoader(self.dataset_valid, batch_size=self.batch_size, shuffle=False, num_workers=self.nb_workers)
+        return DataLoader(
+            self.dataset_valid,
+            batch_size=self.batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+            num_workers=self.nb_workers
+        )
 
     def test_dataloader(self):
-        return DataLoader(self.dataset_test, batch_size=self.batch_size, shuffle=False, num_workers=self.nb_workers)
+        return DataLoader(
+            self.dataset_test,
+            batch_size=self.batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+            num_workers=self.nb_workers
+        )
 
     def predict_dataloader(self):
         return self.val_dataloader()
@@ -867,9 +897,13 @@ class SslDesignDataset(Dataset):
         self.pairs = torch.cat([pairs_one_way, pairs_reverse], dim=0)
 
         self.len_dict = {
-            "train": 100_000,
-            "valid": 1_000,
-            "test": 1_000,
+            # "train": 100_000,
+            # "valid": 1_000,
+            # "test": 1_000,
+
+            "train": 4_000,
+            "valid": 100,
+            "test": 100,
         }
         self.set_type = ""  # Placeholder
 
@@ -987,3 +1021,33 @@ class CustomIOEncodingsSslDesignDataset:
     def _update_database(self, set_type: str) -> None:
         self.set_type = set_type
         return self
+
+
+def collate_fn(batch):
+
+    all_variants = []
+    group_ids = []
+
+    for i, base_encoding in enumerate(batch):
+
+        # base_encoding: (16,)
+        variants = generate_all_48(base_encoding['encodings'])  # (48, 16)
+
+        all_variants.append(variants)
+        group_ids.extend([i] * 48)
+
+    encodings = torch.cat(all_variants, dim=0)   # (N*48, 16)
+    group_ids = torch.tensor(group_ids)
+
+    return {
+        "encodings": encodings,
+        "group_ids": group_ids,
+        "values": base_encoding['values'].unsqueeze(0).repeat(encodings.shape[0], 1),
+    }
+
+PERMS = torch.tensor(list(itertools.permutations(range(4))))
+
+def generate_all_48(x):
+    perms = PERMS.to(x.device)
+    permuted = x[:, perms].permute(1, 0, 2)
+    return torch.cat([permuted, 1 - permuted], dim=0)

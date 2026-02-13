@@ -78,6 +78,39 @@ def weighted_mse_loss(y, y_expected, reduction, set_type):
         raise ValueError('reduction must be "none", "sum", or "mean"')
 
 
+def multi_positive_nt_xent(z, group_ids, temperature=0.07):
+    """
+    z: (B, D) normalized embeddings
+    group_ids: (B,)
+    """
+
+    B = z.shape[0]
+
+    # similarity matrix
+    sim = torch.matmul(z, z.T)  # cosine since normalized
+    sim = sim / temperature
+
+    # mask self similarity
+    self_mask = torch.eye(B, device=z.device).bool()
+    sim.masked_fill_(self_mask, -1e9)
+
+    # positive mask
+    group_ids = group_ids.unsqueeze(0)
+    pos_mask = (group_ids == group_ids.T) & (~self_mask)
+
+    # numerator: sum over positives
+    exp_sim = torch.exp(sim)
+
+    numerator = (exp_sim * pos_mask).sum(dim=1)
+
+    # denominator: sum over all except self
+    denominator = exp_sim.sum(dim=1)
+
+    loss = -torch.log(numerator / denominator)
+
+    return loss.mean()
+
+
 class AbstractLitModule(L.LightningModule):
     __available_criterion_types__ = [
         "mse_loss",
@@ -329,7 +362,8 @@ class LitTransformer(AbstractLitModule):
         if "custom_io_encodings" in task and "ssl" in task:
             self.__class__ = SSLDoubleClsLitTransformer
         elif "ssl" in task:
-            self.__class__ = SSLLitTransformer
+            # self.__class__ = SSLLitTransformer
+            self.__class__ = NewSSLLitTransformer
         else:
             self.__class__ = DefaultLitTransformer
 
@@ -674,6 +708,46 @@ class SSLLitTransformer(AbstractLitModule):
 
         return log_dict
 
+
+class NewSSLLitTransformer(AbstractLitModule):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.kl_weight = 1
+        logger.info(f"SSLLitTransformer has been initialized")
+
+    def training_step(self, batch, batch_idx):
+        """Training loop"""
+        x = batch["encodings"]
+        values = batch["values"]
+        group_ids = batch["group_ids"]
+
+        y, vae_output = self.transformer(x, values)
+
+        train_loss = multi_positive_nt_xent(y, group_ids)
+
+        self.log("loss/train_loss", train_loss, on_step=False, on_epoch=True, prog_bar=True)
+        return train_loss
+
+    def validation_step(self, batch: dict[str, torch.Tensor], batch_idx):
+        """Validation loop"""
+
+        x = batch["encodings"]
+        values = batch["values"]
+        group_ids = batch["group_ids"]
+
+        y: torch.Tensor
+        y, vae_output = self.transformer(x, values)
+
+        val_loss = multi_positive_nt_xent(y, group_ids)
+
+        log_dict = {
+            "loss/val_loss": torch.mean(val_loss),
+            "loss/vae_mu": 0,
+            "loss/vae_log_var": 0,
+        }
+        self.log_dict(log_dict, on_epoch=True)
+
+        return log_dict
 
 class SSLDoubleClsLitTransformer(AbstractLitModule):
     def __init__(self, *args, **kwargs):

@@ -63,7 +63,8 @@ class AbstractModel(nn.Module, metaclass=MetaModel):
         "multi_target_linear": decoders.MultiTargetLinearDecoder,
         "reducing": decoders.ReducingLinearDecoder,
         "pointnet": decoders.PointNetLinearDecoder,
-        "ssl": decoders.SslDecoder,
+        # "ssl": decoders.SslDecoder,
+        "ssl": decoders.NewSslDecoder,
         "ssl_double_cls": decoders.SslDecoderDoubleCls,
     }
 
