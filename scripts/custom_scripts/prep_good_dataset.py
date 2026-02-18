@@ -221,12 +221,57 @@ anal_df10 = pd.DataFrame(data_list)
 anal_df10['mean_min_high_effort'] = anal_df10['d'].map(mean_min_dic)
 
 
+data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out/'
+
+
+suc_list = [d for d in os.listdir(data_dir) if len(os.listdir(f'{data_dir}{d}')) > 0]
+suc_list.sort()
+
+count_dic = {}
+
+data_list = []
+
+for i, d in enumerate(suc_list):
+    if i % 100 == 0:
+        print(i)
+    # count_dic[d] = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')['run_identifier'].unique().shape[0]
+
+    mean_min = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet').groupby('run_identifier')['nb_transistors'].min().mean()
+
+    # cond1 = flowy_df['run_identifier'].isin(flowy_df['run_identifier'].unique().tolist()[:6])
+    # cond2 = flowy_df['step'] >= 2000
+    #
+    # flowy_df2 = flowy_df[cond1 & cond2].reset_index(drop=True)
+    # std = flowy_df2.groupby('run_identifier')["nb_transistors"].min().std()
+
+    data_list.append({'d': d, 'mean_min': mean_min})
+
+
+anal_df20 = pd.DataFrame(data_list)
+
+strong_effort_dic = dict(zip(anal_df20['d'], anal_df20['mean_min']))
+
+
+anal_df10['mean_min_high_effort'] = anal_df10['d'].map(strong_effort_dic)
+
 anal_df11 = anal_df10[anal_df10['mean_min_high_effort'].notnull()].reset_index(drop=True).rename(columns={'mean_min': 'Mean min MEDIUM EFFORT', 'mean_min_high_effort': 'Mean min HIGH EFFORT'})
 
 x_line = np.linspace(anal_df11['Mean min MEDIUM EFFORT'].min(), anal_df11['Mean min MEDIUM EFFORT'].max(), 500)
 y_line = x_line
 
+fig, axes = plt.subplots(1, 1, figsize=(12, 8))
+anal_df11.plot.scatter(
+    x='Mean min MEDIUM EFFORT',
+    y='Mean min HIGH EFFORT',
+    ax=axes
+)
+axes.plot(x_line, y_line, color='black')
 
+axes.set_xlabel('Mean min MEDIUM EFFORT')
+axes.set_ylabel('Mean min HIGH EFFORT')
+
+plt.tight_layout()   # 🔑 prevents label cut-off
+plt.show()
 
 # #
 # fig, axes = plt.subplots(1, 1, figsize=(16, 16))

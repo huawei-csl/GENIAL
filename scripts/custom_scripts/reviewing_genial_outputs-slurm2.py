@@ -20,32 +20,32 @@ suc_list.sort()
 # print(suc_list)
 
 
-
-base_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/'
-
-len(os.listdir(base_dir + 'generation_out_FULL'))
-
-len(os.listdir(base_dir + 'generation_out_felix'))
-
-
-remaining_set = (
-(
-        set(os.listdir(base_dir + 'generation_out_FULL')) - set(os.listdir(base_dir + 'generation_out_felix'))
-) - set(os.listdir(base_dir + 'synth_out_260205'))
-) - set(os.listdir(base_dir + 'synth_out_260211'))
-
-
-
-for d in os.listdir(base_dir + 'generation_out_remaining_260212'):
-    if d not in remaining_set:
-        shutil.rmtree(base_dir + 'generation_out_remaining_260212/' + d)
-
-len(os.listdir(base_dir + 'generation_out_remaining_260212'))
-
-
-for d in os.listdir(base_dir + 'generation_out_remaining_260212_even'):
-    if int(d.split('_')[-1]) % 2 == 1:
-        shutil.rmtree(base_dir + 'generation_out_remaining_260212_even/' + d)
+#
+# base_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/'
+#
+# len(os.listdir(base_dir + 'generation_out_FULL'))
+#
+# len(os.listdir(base_dir + 'generation_out_felix'))
+#
+#
+# remaining_set = (
+# (
+#         set(os.listdir(base_dir + 'generation_out_FULL')) - set(os.listdir(base_dir + 'generation_out_felix'))
+# ) - set(os.listdir(base_dir + 'synth_out_260205'))
+# ) - set(os.listdir(base_dir + 'synth_out_260211'))
+#
+#
+#
+# for d in os.listdir(base_dir + 'generation_out_remaining_260212'):
+#     if d not in remaining_set:
+#         shutil.rmtree(base_dir + 'generation_out_remaining_260212/' + d)
+#
+# len(os.listdir(base_dir + 'generation_out_remaining_260212'))
+#
+#
+# for d in os.listdir(base_dir + 'generation_out_remaining_260212_even'):
+#     if int(d.split('_')[-1]) % 2 == 1:
+#         shutil.rmtree(base_dir + 'generation_out_remaining_260212_even/' + d)
 
 
 
