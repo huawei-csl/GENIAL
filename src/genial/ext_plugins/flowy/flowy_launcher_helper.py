@@ -242,6 +242,8 @@ class FlowyLauncherHelper:
             "tb_files/tb_files_final_circuit/testbench.py",
             "tb_files/tb_files_final_circuit/encoding.json",
             "final_gen_design_files/mydesign_mockturtle_cleaned.v",
+            "final_gen_design_files/verilog_cache.tar.gz",
+            "final_gen_design_files/flowy_record.parquet",
         ]
         if not self.design_output_dir_path.exists():
             self.design_output_dir_path.mkdir(parents=True, exist_ok=True)
