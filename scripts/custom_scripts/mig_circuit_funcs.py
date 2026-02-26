@@ -315,4 +315,14 @@ s = time.time()
 a, b = simulate_mig_matrix(df)
 print(time.time() - s)
 
+mig_2_path = (
+    '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_n_3007/'
+    'synth_out/res_00000000000001/mig_cache/mig_output_round_6601.parquet'
+)
 
+df2 = pd.read_parquet(mig_2_path)
+
+visualize_mig_df(df2)
+
+
+df3 = pd.read_parquet('/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_n_3007/synth_out/res_00000000000001/flowy_record.parquet')
