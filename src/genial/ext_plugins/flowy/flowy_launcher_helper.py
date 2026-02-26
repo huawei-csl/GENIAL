@@ -277,7 +277,11 @@ class FlowyLauncherHelper:
         for path in to_get_paths_all:
             for root_path in all_run_ids:
                 full_dir_path: Path = best_data_path.parent / root_path.split('/')[-1] / path
-                new_name = full_dir_path.name.replace('mig_cache', f'mig_cache_{full_dir_path.parents[1].name}')
+                new_name = (
+                    full_dir_path.name
+                    .replace('mig_cache', f'mig_cache_{full_dir_path.parents[1].name}')
+                    .replace('flowy_record', f'flowy_record_{full_dir_path.parents[1].name}')
+                )
                 if full_dir_path.exists():
                     shutil.copy(full_dir_path, self.design_output_dir_path / new_name)
                 else:
