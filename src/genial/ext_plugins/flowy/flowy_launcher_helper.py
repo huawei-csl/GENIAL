@@ -242,9 +242,14 @@ class FlowyLauncherHelper:
             "tb_files/tb_files_final_circuit/testbench.py",
             "tb_files/tb_files_final_circuit/encoding.json",
             "final_gen_design_files/mydesign_mockturtle_cleaned.v",
+            # "final_gen_design_files/mig_cache.tar.gz",
+            # "final_gen_design_files/flowy_record.parquet",
+        ]
+        to_get_paths_all = [
             "final_gen_design_files/mig_cache.tar.gz",
             "final_gen_design_files/flowy_record.parquet",
         ]
+
         if not self.design_output_dir_path.exists():
             self.design_output_dir_path.mkdir(parents=True, exist_ok=True)
 
@@ -269,6 +274,19 @@ class FlowyLauncherHelper:
                 else:
                     logger.warning(f"Could not find {path} in {best_data_path}")
 
+        for path in to_get_paths_all:
+            for root_path in all_run_ids:
+                full_dir_path: Path = Path(root_path.split(' ')[-1]) / path
+                new_name = full_dir_path.name.replace('mig_cache', f'mig_cache_{full_dir_path.parents[1].name}')
+                if full_dir_path.exists():
+                    shutil.copy(full_dir_path, self.design_output_dir_path / new_name)
+                else:
+                    if full_dir_path.parent.exists():
+                        for filepath in full_dir_path.parent.iterdir():
+                            if full_dir_path.name in filepath.name:
+                                shutil.copy(filepath, self.design_output_dir_path)
+                    else:
+                        logger.warning(f"Could not find {path} in {best_data_path}")
 
         def collect_output_txts(temp_dir: str | Path, out_file: str | Path) -> None:
             """
