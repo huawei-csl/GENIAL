@@ -288,9 +288,9 @@ class FlowyLauncherHelper:
                 if full_dir_path.exists():
                     shutil.copy(full_dir_path, self.design_output_dir_path / new_name)
                 else:
-                    print(f'Error occurred')
-                    print(f'full_dir_path: {full_dir_path}')
-                    print(f'self.design_output_dir_path / new_name: {self.design_output_dir_path / new_name}')
+                    logger.warning(f'Error occurred')
+                    logger.warning(f'full_dir_path: {full_dir_path}')
+                    logger.warning(f'self.design_output_dir_path / new_name: {self.design_output_dir_path / new_name}')
 
         def collect_output_txts(temp_dir: str | Path, out_file: str | Path) -> None:
             """
