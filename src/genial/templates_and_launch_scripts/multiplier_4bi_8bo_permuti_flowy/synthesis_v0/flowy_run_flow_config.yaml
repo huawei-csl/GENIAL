@@ -5,7 +5,7 @@ iterations: 1
 chains: 1
 chain_len: 1
 chain_workers: 1
-nb_runs: 1
+nb_runs: 6
 env_option: "auto"
 experiment: "genial"
 verbose: False
