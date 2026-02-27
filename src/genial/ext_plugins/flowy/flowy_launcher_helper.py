@@ -218,7 +218,6 @@ class FlowyLauncherHelper:
                     return_record=True,
                     multiproc=not global_vars["debug"],
                 )
-                logger.warning(f'all_run_ids: {all_run_ids}')
         except KeyError:
             logger.warning(f"There was an error when analyzing the results of the flowy runs.")
             logger.info(traceback.format_exc())
@@ -286,15 +285,16 @@ class FlowyLauncherHelper:
                 if full_dir_path.exists():
                     shutil.copy(full_dir_path, self.design_output_dir_path / new_name)
                 else:
-                    logger.warning(f"content: {os.listdir(full_dir_path.parent)}")
-                    if full_dir_path.parent.exists():
-                        for filepath in full_dir_path.parent.iterdir():
-                            if full_dir_path.name in filepath.name:
-                                shutil.copy(filepath, self.design_output_dir_path / new_name)
-                            else:
-                                logger.warning(f"unexpected 1 {full_dir_path} n {filepath} and {self.design_output_dir_path}")
-                    else:
-                        logger.warning(f"unexpected 2 {full_dir_path} and {self.design_output_dir_path}")
+                    raise ValueError(f"Unexpected occurance. Needs to be handled.")
+                    # logger.warning(f"Unexpected occurance")
+                    # if full_dir_path.parent.exists():
+                    #     for filepath in full_dir_path.parent.iterdir():
+                    #         if full_dir_path.name in filepath.name:
+                    #             shutil.copy(filepath, self.design_output_dir_path / new_name)
+                    #         else:
+                    #             logger.warning(f"unexpected 1 {full_dir_path} n {filepath} and {self.design_output_dir_path}")
+                    # else:
+                    #     logger.warning(f"unexpected 2 {full_dir_path} and {self.design_output_dir_path}")
 
         def collect_output_txts(temp_dir: str | Path, out_file: str | Path) -> None:
             """
