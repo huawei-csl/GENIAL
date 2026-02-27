@@ -277,16 +277,13 @@ class FlowyLauncherHelper:
         for path in to_get_paths_all:
             for curr_run_id in all_run_ids:
                 full_dir_path: Path = curr_run_id.get_path() / path
-                new_name = (
-                    full_dir_path.name
-                    .replace('mig_cache', f'mig_cache_{full_dir_path.parents[1].name}')
-                    .replace('flowy_record', f'flowy_record_{full_dir_path.parents[1].name}')
-                )
+                run_dir = self.design_output_dir_path / full_dir_path.parents[1].name
+                os.makedirs(run_dir, exist_ok=True)
                 if full_dir_path.exists():
-                    shutil.copy(full_dir_path, self.design_output_dir_path / new_name)
+                    shutil.copy(full_dir_path, run_dir)
                 else:
-                    raise ValueError(f"Unexpected occurance. Needs to be handled.")
-                    # logger.warning(f"Unexpected occurance")
+                    raise ValueError(f"Unexpected occurrence. Needs to be handled.")
+                    # logger.warning(f"Unexpected occurrence")
                     # if full_dir_path.parent.exists():
                     #     for filepath in full_dir_path.parent.iterdir():
                     #         if full_dir_path.name in filepath.name:
