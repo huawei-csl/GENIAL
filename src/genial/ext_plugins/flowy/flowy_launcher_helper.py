@@ -277,8 +277,6 @@ class FlowyLauncherHelper:
 
         for path in to_get_paths_all:
             for curr_run_id in all_run_ids:
-            # for root_path in all_run_ids:
-                # full_dir_path: Path = best_data_path.parent / root_path.split('/')[-1] / path
                 full_dir_path: Path = curr_run_id.get_path() / path
                 new_name = (
                     full_dir_path.name
@@ -291,9 +289,11 @@ class FlowyLauncherHelper:
                     if full_dir_path.parent.exists():
                         for filepath in full_dir_path.parent.iterdir():
                             if full_dir_path.name in filepath.name:
-                                shutil.copy(filepath, self.design_output_dir_path)
+                                shutil.copy(filepath, self.design_output_dir_path / new_name)
+                            else:
+                                logger.warning(f"unexpected 1 {filepath} and {self.design_output_dir_path}")
                     else:
-                        logger.warning(f"Could not find {path} in {best_data_path}")
+                        logger.warning(f"unexpected 2 {full_dir_path} and {self.design_output_dir_path}")
 
         def collect_output_txts(temp_dir: str | Path, out_file: str | Path) -> None:
             """
