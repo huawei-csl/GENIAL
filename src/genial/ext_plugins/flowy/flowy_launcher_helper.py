@@ -291,7 +291,7 @@ class FlowyLauncherHelper:
                             if full_dir_path.name in filepath.name:
                                 shutil.copy(filepath, self.design_output_dir_path / new_name)
                             else:
-                                logger.warning(f"unexpected 1 {filepath} and {self.design_output_dir_path}")
+                                logger.warning(f"unexpected 1 {full_dir_path} n {filepath} and {self.design_output_dir_path}")
                     else:
                         logger.warning(f"unexpected 2 {full_dir_path} and {self.design_output_dir_path}")
 
