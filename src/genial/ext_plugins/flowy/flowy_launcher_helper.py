@@ -218,7 +218,7 @@ class FlowyLauncherHelper:
                     return_record=True,
                     multiproc=not global_vars["debug"],
                 )
-                print(all_run_ids)
+                logger.warning(f'all_run_ids: {all_run_ids}')
         except KeyError:
             logger.warning(f"There was an error when analyzing the results of the flowy runs.")
             logger.info(traceback.format_exc())
