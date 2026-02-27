@@ -286,6 +286,7 @@ class FlowyLauncherHelper:
                 if full_dir_path.exists():
                     shutil.copy(full_dir_path, self.design_output_dir_path / new_name)
                 else:
+                    logger.warning(f"content: {os.listdir(full_dir_path.parent)}")
                     if full_dir_path.parent.exists():
                         for filepath in full_dir_path.parent.iterdir():
                             if full_dir_path.name in filepath.name:
