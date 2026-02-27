@@ -212,7 +212,7 @@ class FlowyLauncherHelper:
         # with silence_output():
         try:
             with silence_output():
-                best_run_id, df = get_best_design(
+                best_run_id, all_run_ids, df = get_best_design(
                     experiment_id,
                     target_metric=metric_list,
                     return_record=True,
