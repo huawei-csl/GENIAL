@@ -325,4 +325,56 @@ df2 = pd.read_parquet(mig_2_path)
 visualize_mig_df(df2)
 
 
-df3 = pd.read_parquet('/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_n_3007/synth_out/res_00000000000001/flowy_record.parquet')
+df3 = pd.read_parquet('/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_n_3007/synth_out_cache_260227/res_00000000000000/mig_cache/mig_output_round_0.parquet')
+
+
+import os
+data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_n_3007/synth_out_cache_260227/res_00000000000000/mig_cache/'
+
+dir_list = os.listdir(data_dir)
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+output_path = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/tc_sme_n_3007/synth_out_cache_260227/res_00000000000000/output_example.parquet'
+
+for i in range(10_000):
+
+    t = time.time()
+    df = pd.read_parquet(data_dir + f'mig_output_round_{i}.parquet')
+    print(time.time() - t)
+    df.insert(0, 'round', i)
+
+    if i == 0:
+        initial_table = pa.Table.from_pandas(df, preserve_index=False)
+        writer = pq.ParquetWriter(
+            output_path,
+            initial_table.schema,
+            compression="zstd"
+        )
+    pa_table = pa.Table.from_pandas(df, preserve_index=False)
+    writer.write_table(pa_table)
+
+writer.close()
+
+import time
+t = time.time()
+pf = pq.ParquetFile(output_path)
+pa_table = pf.read_row_group(10)
+t2 = time.time()
+sample_df = pa_table.to_pandas()
+
+print(time.time() - t)
+print(t2 - t)
+
+
+
+
+
+
+
+
+
+
+
+
