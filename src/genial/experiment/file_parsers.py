@@ -15,8 +15,7 @@ from time import time, sleep
 from typing import Any
 from types import SimpleNamespace
 import json
-from pyarrow.lib import ArrowInvalid
-
+from pyarrow.lib import ArrowInvalid, ArrowIOError
 
 import pandas as pd
 from swact.gates_configuration import GatesConfig
@@ -207,11 +206,24 @@ def get_cell_count_area_trans(
     # If a flowy data record file has been produced, extract the best transistor count and replace the value if lower.
     flowy_parquet_path = synth_design_dir_path / "flowy_data_record.parquet"
 
+    nb_transistors = -1
+
     if flowy_parquet_path.exists():
         flowy_df = pd.read_parquet(flowy_parquet_path)
         if "nb_transistors" in flowy_df.columns:
-            nb_transistors_flowy = flowy_df["nb_transistors"].min()
-            nb_transistors = min(nb_transistors, nb_transistors_flowy)
+            # nb_transistors_flowy = flowy_df["nb_transistors"].min()
+            # nb_transistors = min(nb_transistors, nb_transistors_flowy)
+
+
+
+            nb_transistors = round(flowy_df.groupby('run_identifier')["nb_transistors"].min().mean())
+
+            # cond1 = flowy_df['run_identifier'].isin(flowy_df['run_identifier'].unique().tolist()[:6])
+            # cond2 = flowy_df['step'] >= 2000
+            #
+            # flowy_df2 = flowy_df[cond1 & cond2].reset_index(drop=True)
+            # nb_transistors = round(flowy_df2.groupby('run_identifier')["nb_transistors"].min().mean())
+
 
     cell_count_dict["nb_transistors"] = nb_transistors
     cell_count_dict["tot_cell_area"] = tot_area
@@ -750,6 +762,10 @@ def __get_valid_designs_db(root_dirpath: Path, step: str, bulk_flow_dirname: str
             break
         except ArrowInvalid:
             # File is being written by another process
+            sleep(1)
+        except ArrowIOError:
+            sleep(1)
+        except OSError:
             sleep(1)
         except FileNotFoundError:
             break

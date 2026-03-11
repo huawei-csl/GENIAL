@@ -3,9 +3,11 @@ encoding_permutation_id: 0
 bitwidth_input: 4
 iterations: 1
 chains: 1
-chain_len: 3000
+#chain_len: 3000
+chain_len: 20
 chain_workers: 1
-nb_runs: 12
+nb_runs: 2
+#nb_runs: 12
 env_option: "auto"
 experiment: "genial"
 verbose: False

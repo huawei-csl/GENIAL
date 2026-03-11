@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 
 # Initialize the Docker client
-client = docker.from_env()
+client = docker.from_env(timeout=6000)
 
 
 def remove_bound_directory(volume_name):
@@ -49,3 +49,4 @@ def find_active_volumes():
 # Run the function
 if __name__ == "__main__":
     find_active_volumes()
+    client.containers.prune()

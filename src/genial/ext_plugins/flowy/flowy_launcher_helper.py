@@ -81,7 +81,8 @@ def setup_launch_args_dict(flowy_run_config: dict, nb_workers: int):
         "python_main": run_flow_cmd,
         "up_file_paths": [flowy_run_config[key] for key in extra_file_keys],
         # "silence_jobs": not global_vars["debug"],
-        "silence_jobs": True,
+        # "silence_jobs": True,
+        "silence_jobs": False,
         "nb_runs": flowy_run_config["nb_runs"],
         "nb_workers": nb_workers,
         # "commit_hash": "2e4f86da66122edfda67fef4e750c6eb6049835b",
@@ -116,16 +117,16 @@ def setup_launch_args_dict(flowy_run_config: dict, nb_workers: int):
 def run_flow_wrapper(flowy_run_config: dict, nb_parallel_runs: int):
     try:
         launch_params_dict = setup_launch_args_dict(flowy_run_config, nb_workers=nb_parallel_runs)
-        with silence_output():
-            result, tmp_dir = launch_docker(
-                **launch_params_dict,
-                copy_in_src_dir="",
-                dont_stream=True,
-                return_tmp_dir=True,
-                debug=global_vars["debug"],
-                avoid_copy=True,
-                # silence_jobs=True,
-            )
+        # with silence_output():
+        result, tmp_dir = launch_docker(
+            **launch_params_dict,
+            copy_in_src_dir="",
+            dont_stream=True,
+            return_tmp_dir=True,
+            debug=global_vars["debug"],
+            avoid_copy=True,
+            # silence_jobs=True,
+        )
 
     except Exception as e:
         logger.error(f"There was an error running flowy synthesis:")
@@ -271,10 +272,10 @@ class FlowyLauncherHelper:
             Collect all `output.txt` files from:
                 temp_dir/output/db/genial/data_collection/*/output.txt
             and write them into `out_file` as:
-        
+
                 <dirname>:
                 <content>
-        
+
                 <dirname>:
                 <content>
                 ...

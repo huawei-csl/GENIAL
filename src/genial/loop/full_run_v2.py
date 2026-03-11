@@ -46,17 +46,31 @@ class SlurmDispatcher:
         "clean",
     ]
 
+    __valid_nodes__ = [
+        "aisrv01",
+        "aisrv02",
+        "aisrv03",
+        # "aime01",
+        # "aime02",
+        # "aime03",
+        # "epyc01",
+        # "epyc02",
+    ]
+
     __valid_work_dirpath__ = [
-        # "/netscratch/aisrv01",
+        "/netscratch/aisrv01",
         "/netscratch/aisrv02",
-        # "/netscratch/aisrv03",
+        "/netscratch/aisrv03",
         # "/netscratch/epyc01",
         # "/netscratch/epyc02",
+        # "/netscratch/aime01",
+        # "/netscratch/aime02",
+        # "/netscratch/aime03",
     ]
 
     __task_resources__ = {
-        "generate": {"partition": "AI-CPU,Zen3", "node_list": ["aisrv02"]},
-        "launch": {"partition": "AI-CPU,Zen3", "node_list": ["aisrv02"]},
+        "generate": {"partition": "AI-CPU,Zen3", "node_list": ["aisrv03"]},
+        "launch": {"partition": "AI-CPU,Zen3", "node_list": ["aisrv01", "aisrv02", "aisrv03"]},
         "analyze": {"partition": "AI-CPU,Zen3", "node_list": ["aisrv02"]},
         "train": {"partition": "AI-CPU", "node_list": ["aime01", "aime02", "aime03"]},
         "recommend": {"partition": "AI-CPU", "node_list": ["aime01", "aime02", "aime03"]},
@@ -122,8 +136,8 @@ class SlurmDispatcher:
             time = "48:00:00"
 
         if task == "launch" or task == "clean":
-            time = "0:45:00"
-            _nb_workers = 24
+            time = "4:00:00"
+            _nb_workers = 12
 
         cpus_per_task = str(int(_nb_workers * 1.5))
 
@@ -228,7 +242,7 @@ class SlurmDispatcher:
                             f"--device {device_nb}", f"--device {device_ids[-1]}"
                         )  # TODO: make this compatible with multi cmd in parallel ... (useless for now)
                         # write std output into a temp file with >
-                
+
                 # make sure logs directory exists
                 Path(os.environ.get("DATA_DIR")).joinpath("logs").mkdir(parents=True, exist_ok=True)
                 _cmd += f" &> {Path(os.environ.get("DATA_DIR")) / "logs" / (Path(script_object.name).name + ".out")}"
@@ -306,7 +320,14 @@ class SlurmDispatcher:
 
     @staticmethod
     def submit_job(cmd: str, sbatch_args: list[str], is_dry_run=False):
-        _cmd = ["sbatch"] + sbatch_args + [cmd]
+        _cmd = (
+                ["sbatch"] +
+                sbatch_args  +
+                # ["--reservation=ai-team"] +
+                # ["--account=huawei"] +
+                # ["--qos=normal"] +
+                [cmd]
+        )
 
         if is_dry_run:
             logger.info("Would submit command: {}".format(" ".join(_cmd)))
@@ -503,7 +524,7 @@ class SlurmDispatcher:
 
         logger.info("All jobs done!")
         return any_errors
-    
+
     @staticmethod
     def update_design_number_list(script_path: Path):
         """Update the --design_number_list in a generated SLURM script.
