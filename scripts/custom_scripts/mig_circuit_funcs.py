@@ -1,84 +1,217 @@
+# import networkx as nx
+# import matplotlib.pyplot as plt
+# import pandas as pd
+# import numpy as np
+#
+#
+# def visualize_mig_df(df):
+#     """
+#     Visualize MIG stored in dataframe format.
+#     Required columns:
+#         node_type
+#         fanin0, fanin1, fanin2
+#         phase0, phase1, phase2
+#         is_output
+#     """
+#     TYPE_LABEL = {
+#         0: "C",  # CONST
+#         1: "I",  # PI
+#         2: "M",  # MAJ
+#     }
+#     TYPE_COLOR = {
+#         0: "#d3d3d3",   # light gray (CONST)
+#         1: "#87ceeb",   # light blue (PI)
+#         2: "#98fb98",   # light green (MAJ)
+#         3: "#f08080",   # light coral (OUTPUT)
+#     }
+#     G = nx.DiGraph()
+#     # --------------------
+#     # Add structural nodes
+#     # --------------------
+#     for node_id, row in df.iterrows():
+#         node_type = row["node_type"]
+#         label = TYPE_LABEL[node_type]
+#         G.add_node(node_id, label=label, node_type=node_type)
+#     # --------------------
+#     # Add structural edges
+#     # --------------------
+#     for node_id, row in df.iterrows():
+#         for i in range(3):
+#             fanin = row[f"fanin{i}"]
+#             if fanin >= 0:
+#                 phase = row[f"phase{i}"]
+#                 G.add_edge(
+#                     fanin,
+#                     node_id,
+#                     inverted=bool(phase)
+#                 )
+#     # --------------------
+#     # Add artificial outputs
+#     # --------------------
+#     output_offset = len(df)
+#     for node_id, row in df.iterrows():
+#         if row["is_output"] == 1:
+#             out_id = output_offset
+#             output_offset += 1
+#             G.add_node(out_id, label="O", node_type=3)
+#             G.add_edge(node_id, out_id, inverted=False)
+#     # --------------------
+#     # Layout (Graphviz DOT)
+#     # --------------------
+#     A = nx.nx_agraph.to_agraph(G)
+#     A.graph_attr.update(ranksep="1.8", nodesep="0.9")
+#     A.layout("dot")
+#     pos = nx.nx_agraph.graphviz_layout(G, prog="dot")
+#     # --------------------
+#     # Drawing
+#     # --------------------
+#     plt.figure(figsize=(24, 18))
+#     node_labels = nx.get_node_attributes(G, "label")
+#     # Node colors
+#     node_colors = [
+#         TYPE_COLOR[G.nodes[n]["node_type"]]
+#         for n in G.nodes()
+#     ]
+#     nx.draw_networkx_nodes(
+#         G,
+#         pos,
+#         node_color=node_colors,
+#         edgecolors="black",
+#         node_size=900,
+#     )
+#     nx.draw_networkx_labels(
+#         G,
+#         pos,
+#         labels=node_labels,
+#         font_size=12,
+#         font_weight="bold"
+#     )
+#     # Separate edges
+#     normal_edges = [
+#         (u, v) for u, v, d in G.edges(data=True)
+#         if not d.get("inverted", False)
+#     ]
+#     inverted_edges = [
+#         (u, v) for u, v, d in G.edges(data=True)
+#         if d.get("inverted", False)
+#     ]
+#     # Draw edges
+#     nx.draw_networkx_edges(
+#         G,
+#         pos,
+#         edgelist=normal_edges,
+#         edge_color="black",
+#         width=1.5
+#     )
+#     nx.draw_networkx_edges(
+#         G,
+#         pos,
+#         edgelist=inverted_edges,
+#         style="dashed",
+#         edge_color="#444444",  # dark gray
+#         width=1.5
+#     )
+#     plt.axis("off")
+#     plt.title("MIG Visualization", fontsize=18)
+#     plt.show()
+
+
 import networkx as nx
 import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
 
 
 def visualize_mig_df(df):
     """
     Visualize MIG stored in dataframe format.
+
     Required columns:
         node_type
         fanin0, fanin1, fanin2
         phase0, phase1, phase2
         is_output
     """
+
     TYPE_LABEL = {
         0: "C",  # CONST
         1: "I",  # PI
         2: "M",  # MAJ
     }
+
     TYPE_COLOR = {
-        0: "#d3d3d3",   # light gray (CONST)
-        1: "#87ceeb",   # light blue (PI)
-        2: "#98fb98",   # light green (MAJ)
-        3: "#f08080",   # light coral (OUTPUT)
+        0: "#d3d3d3",  # CONST -> light gray
+        1: "#87ceeb",  # PI -> light blue
+        2: "#98fb98",  # MAJ -> light green
     }
+
+    OUTPUT_COLOR = "#ff4d4d"  # red
+
     G = nx.DiGraph()
+
     # --------------------
-    # Add structural nodes
+    # Add nodes
     # --------------------
     for node_id, row in df.iterrows():
+
         node_type = row["node_type"]
         label = TYPE_LABEL[node_type]
-        G.add_node(node_id, label=label, node_type=node_type)
+
+        G.add_node(
+            node_id,
+            label=label,
+            node_type=node_type,
+            is_output=row["is_output"]
+        )
+
     # --------------------
-    # Add structural edges
+    # Add edges
     # --------------------
     for node_id, row in df.iterrows():
         for i in range(3):
             fanin = row[f"fanin{i}"]
+
             if fanin >= 0:
                 phase = row[f"phase{i}"]
+
                 G.add_edge(
                     fanin,
                     node_id,
                     inverted=bool(phase)
                 )
+
     # --------------------
-    # Add artificial outputs
-    # --------------------
-    output_offset = len(df)
-    for node_id, row in df.iterrows():
-        if row["is_output"] == 1:
-            out_id = output_offset
-            output_offset += 1
-            G.add_node(out_id, label="O", node_type=3)
-            G.add_edge(node_id, out_id, inverted=False)
-    # --------------------
-    # Layout (Graphviz DOT)
+    # Graphviz layout
     # --------------------
     A = nx.nx_agraph.to_agraph(G)
     A.graph_attr.update(ranksep="1.8", nodesep="0.9")
     A.layout("dot")
+
     pos = nx.nx_agraph.graphviz_layout(G, prog="dot")
+
     # --------------------
-    # Drawing
+    # Plot
     # --------------------
     plt.figure(figsize=(24, 18))
+
     node_labels = nx.get_node_attributes(G, "label")
-    # Node colors
-    node_colors = [
-        TYPE_COLOR[G.nodes[n]["node_type"]]
-        for n in G.nodes()
-    ]
+
+    node_colors = []
+
+    for n in G.nodes():
+        node_data = G.nodes[n]
+
+        if node_data["is_output"] == 1:
+            node_colors.append(OUTPUT_COLOR)
+        else:
+            node_colors.append(TYPE_COLOR[node_data["node_type"]])
+
     nx.draw_networkx_nodes(
         G,
         pos,
         node_color=node_colors,
         edgecolors="black",
-        node_size=900,
+        node_size=900
     )
+
     nx.draw_networkx_labels(
         G,
         pos,
@@ -86,16 +219,20 @@ def visualize_mig_df(df):
         font_size=12,
         font_weight="bold"
     )
-    # Separate edges
+
+    # --------------------
+    # Edges
+    # --------------------
     normal_edges = [
         (u, v) for u, v, d in G.edges(data=True)
         if not d.get("inverted", False)
     ]
+
     inverted_edges = [
         (u, v) for u, v, d in G.edges(data=True)
         if d.get("inverted", False)
     ]
-    # Draw edges
+
     nx.draw_networkx_edges(
         G,
         pos,
@@ -103,6 +240,7 @@ def visualize_mig_df(df):
         edge_color="black",
         width=1.5
     )
+
     nx.draw_networkx_edges(
         G,
         pos,
@@ -111,10 +249,11 @@ def visualize_mig_df(df):
         edge_color="#444444",  # dark gray
         width=1.5
     )
+
     plt.axis("off")
     plt.title("MIG Visualization", fontsize=18)
-    plt.show()
 
+    plt.show()
 
 def compute_fanin_cones_optimized(df):
     """
