@@ -137,7 +137,7 @@ print(f"Incompleted: {sum([c != 6 for c in count_dic.values()])}")
 
 # d = suc_list[0]
 
-pd.Series(count_dic.values()).value_counts()
+print(pd.Series(count_dic.values()).value_counts())
 
 counter = 0
 for d in os.listdir(data_dir):
