@@ -467,11 +467,23 @@ class DefaultLitTransformer(AbstractLitModule):
             val_loss = torch.sum(val_loss)
             mse_loss = torch.sum(mse_loss)
 
+        # TC score test
+        bits_unordered = [[int(b) for b in bin(i)[2:].zfill(4)] for i in range(2**4)]
+        tc_tensor = torch.tensor(
+            bits_unordered[8:] + bits_unordered[:8],
+            dtype=torch.float32,
+        ).unsqueeze(0)
+
+        y_tc, _ = self.transformer(tc_tensor.to(values.device), values[:1])
+
+
+
         # Note: we use mse_loss as validation loss to be able to compare their values no matter which criterion is used
         log_dict = {
             "loss/val_loss": mse_loss,
             "loss/mse_loss": mse_loss,
             "loss/kl_loss": kl_loss,
+            "monitor/tc_score": y_tc,
         }
         self.log_dict(log_dict, on_epoch=True)
 

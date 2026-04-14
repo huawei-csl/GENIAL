@@ -783,7 +783,7 @@ class EncToScoreTrainer(LoopModule):
             help="Device number to be used for running this training script. Note: this script is not built for multi-gpu trainig.",
         )
         arg_parser.add_argument("--seed", type=int, default=626, help="Random seed used for dataset splitting.")
-        arg_parser.add_argument("--batch_size", type=int, default=128, help="Size of a bacth to use for training.")
+        arg_parser.add_argument("--batch_size", type=int, default=128, help="Size of a batch to use for training.")
         arg_parser.add_argument(
             "--fast_dev_run",
             action="store_true",
