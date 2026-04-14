@@ -152,6 +152,28 @@ print(f"deleted {counter} files")
 
 
 
+df101 = pd.read_csv('/scratch/ramaudruz/misc/done_synth_202.csv')
+df102 = pd.read_csv('/scratch/ramaudruz/misc/done_synth_260330.csv')
+
+fe_dir = os.listdir('/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_felix')
+
+all_dir = df101['d'].to_list() + df102['d'].to_list() + fe_dir
+
+
+all_dir2 = set(all_dir)
+
+gen_out_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/'
+
+all_gen_out = os.listdir(gen_out_dir)
+
+len(all_gen_out)
+
+for d in all_gen_out:
+    if d in all_dir2:
+        shutil.rmtree(f'{gen_out_dir}{d}/')
+
+
+
 # count_dic1 = {k: v for k, v in count_dic.items() if v ==1}
 #
 # sub_dir = '/scratch/ramaudruz/proj/GENIAL/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_subset/'

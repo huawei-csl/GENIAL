@@ -46,8 +46,7 @@ print(f"Incompleted: {sum([c != 6 for c in count_dic.values()])}")
 
 print(pd.Series(count_dic.values()).value_counts())
 
-# to_delete = [f for f in os.listdir(data_dir) if f not in count_dic or count_dic[f] < 5]
-#
+# to_delete = [f for f in os.listdir(data_dir) if f not in count_dic or count_dic[f] < 6]
 #
 # counter = 0
 # for d in to_delete:
@@ -62,12 +61,16 @@ print(pd.Series(count_dic.values()).value_counts())
 
 new_set = set(os.listdir(data_dir))
 
-old_data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_cache_260316/'
+old_data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_260330/'
+
+old_data_dir = '/home/ramaudruz/data_dir/misc/synth_out_felix/synth_out_bk/'
 
 old_set = set(os.listdir(old_data_dir))
 
 
-data_dir = old_data_dir
+old_data_dir = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_260407/'
+
+# data_dir = old_data_dir
 
 len(old_set & new_set)
 
@@ -77,16 +80,24 @@ count_dic_high = {k: v for k, v in count_dic.items() if v > 7}
 
 df = pd.read_parquet('/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_cache_260316/res_00000000000051/flowy_data_record.parquet')
 
-#
-# for d in os.listdir(old_data_dir):
-#     if d in new_set:
-#         df_old = pd.read_parquet(f'{old_data_dir}{d}/flowy_data_record.parquet')
-#         df_new = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
-#         df = pd.concat([df_old, df_new], ignore_index=True).drop_duplicates(['run_identifier', 'step']).reset_index(drop=True)
-#         df.to_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
-#     else:
-#         shutil.copytree(src=f'{old_data_dir}{d}', dst=f'{data_dir}{d}')
-#
+
+for d in os.listdir(old_data_dir):
+    if d.startswith('.tar.gz'):
+        continue
+    if d in new_set:
+        if not os.path.isfile(f'{old_data_dir}{d}/flowy_data_record.parquet'):
+            continue
+        if not os.path.isfile(f'{data_dir}{d}/flowy_data_record.parquet'):
+            shutil.rmtree(f'{data_dir}{d}/')
+            shutil.copytree(src=f'{old_data_dir}{d}', dst=f'{data_dir}{d}')
+            continue
+        df_old = pd.read_parquet(f'{old_data_dir}{d}/flowy_data_record.parquet')
+        df_new = pd.read_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+        df = pd.concat([df_old, df_new], ignore_index=True).drop_duplicates(['run_identifier', 'step']).reset_index(drop=True)
+        df.to_parquet(f'{data_dir}{d}/flowy_data_record.parquet')
+    else:
+        shutil.copytree(src=f'{old_data_dir}{d}', dst=f'{data_dir}{d}')
+
 
 gene_all_dir = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_FULL/"
 gen_set = set(os.listdir(gene_all_dir))
@@ -95,7 +106,9 @@ gen_dst_dir = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier
 new_list = os.listdir(data_dir)
 for d in new_list:
     if d in gen_set:
-        shutil.copytree(src=f'{gene_all_dir}{d}', dst=f'{gen_dst_dir}{d}')
+        if os.path.isfile(f'{gen_dst_dir}{d}'):
+            continue
+        shutil.copytree(src=f'{gene_all_dir}{d}', dst=f'{gen_dst_dir}{d}', dirs_exist_ok=True)
     else:
         print(f"Skipped: {d}")
 
