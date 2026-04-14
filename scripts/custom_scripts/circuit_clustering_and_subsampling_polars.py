@@ -5,6 +5,8 @@ import time
 
 enc_dir = "/mnt/nvme/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/synth_out/"
 
+# enc_dir = "/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/synth_out_old/"
+
 df_list = []
 
 # -------------------------------------------------
@@ -24,21 +26,39 @@ for dir_count, d in enumerate(os.listdir(enc_dir)):
         if os.path.isfile(flowy_parquet):
 
             df = pl.read_parquet(flowy_parquet)
-
             df = (
                 df
                 .with_columns([
                     pl.lit(d).alias("enc_id"),
+                    pl.lit(run_dir).alias("run_dir"),
+                    pl.col("recipe_round").cast(pl.Int16),
                     pl.col("gates").cast(pl.Int16),
                     pl.col("depth").cast(pl.Int16),
                 ])
-                .drop(["recipe_round", "score"])
+                .drop(["score"])
+                # .drop(["recipe_round", "score"])
             )
 
             df_list.append(df)
 
 # Concatenate
 df_all = pl.concat(df_list, how="vertical")
+
+df_all = df_all.with_columns([
+    pl.arange(0, pl.len()).alias("circuit_id_int")
+])
+
+df_all.select(["circuit_id_int", "enc_id", "run_dir", "recipe_round"]).write_parquet('/mnt/nvme/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/data_subset_260306_ref.parquet')
+
+
+df_all = df_all.drop(["run_dir", "recipe_round"])
+
+# circuit_id_map = dict(zip(
+#     df_all["circuit_id_int"].to_list(),
+#     df_all["circuit_id"].to_list(),
+# ))
+
+
 
 # -------------------------------------------------
 # Feature engineering
@@ -190,77 +210,96 @@ selected_samples_df = pl.concat([
     new_sample_df
 ])
 
+# import pandas as pd
+# pd.DataFrame([{}])
 
-selected_samples_vc = (
-    selected_samples_df
-    .group_by("enc_id")
-    .len()
-)
-
-last_enc_count = dict(zip(
-    selected_samples_vc["enc_id"].to_list(),
-    selected_samples_vc["len"].to_list()
-))
-
-# Fill missing encodings
-all_encodings = df_all["enc_id"].unique().to_list()
-for e in all_encodings:
-    last_enc_count.setdefault(e, 0)
-
-selected_samples_group_vc = (
-    selected_samples_df
-    .group_by("group_id2")
-    .len()
-)
-last_enc_group_count = dict(zip(
-    selected_samples_group_vc["group_id2"].to_list(),
-    selected_samples_group_vc["len"].to_list()
-))
-
-# Fill missing encodings
-all_encodings = df_all["group_id2"].unique().to_list()
-for e in all_encodings:
-    last_enc_group_count.setdefault(e, 0)
-
-#############################
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Extract numpy arrays
-gates = selected_samples_df.select("gates").to_numpy().flatten()
-depth = selected_samples_df.select("depth").to_numpy().flatten()
-
-plt.figure(figsize=(8, 6))
-
-plt.hist2d(
-    gates,
-    depth,
-    bins=100,
-)
-
-plt.colorbar(label="Count")
-plt.xlabel("Gates")
-plt.ylabel("Depth")
-plt.title("2D Density of Gates vs Depth")
-plt.show()
+#
+# selected_samples_vc = (
+#     selected_samples_df
+#     .group_by("enc_id")
+#     .len()
+# )
+#
+# last_enc_count = dict(zip(
+#     selected_samples_vc["enc_id"].to_list(),
+#     selected_samples_vc["len"].to_list()
+# ))
+#
+# # Fill missing encodings
+# all_encodings = df_all["enc_id"].unique().to_list()
+# for e in all_encodings:
+#     last_enc_count.setdefault(e, 0)
+#
+# selected_samples_group_vc = (
+#     selected_samples_df
+#     .group_by("group_id2")
+#     .len()
+# )
+# last_enc_group_count = dict(zip(
+#     selected_samples_group_vc["group_id2"].to_list(),
+#     selected_samples_group_vc["len"].to_list()
+# ))
+#
+# # Fill missing encodings
+# all_encodings = df_all["group_id2"].unique().to_list()
+# for e in all_encodings:
+#     last_enc_group_count.setdefault(e, 0)
+#
+# #############################
+#
+# import matplotlib.pyplot as plt
+# import numpy as np
+#
+# # Extract numpy arrays
+# gates = selected_samples_df.select("gates").to_numpy().flatten()
+# depth = selected_samples_df.select("depth").to_numpy().flatten()
+#
+# plt.figure(figsize=(8, 6))
+#
+# plt.hist2d(
+#     gates,
+#     depth,
+#     bins=100,
+# )
+#
+# plt.colorbar(label="Count")
+# plt.xlabel("Gates")
+# plt.ylabel("Depth")
+# plt.title("2D Density of Gates vs Depth")
+# plt.show()
 
 
 selected_samples_df_pd = selected_samples_df.to_pandas()
 
-selected_samples_df_pd['enc_id'].value_counts()
 
-################################
+selected_samples_df_pd.to_parquet('/mnt/nvme/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/data_subset_260306.parquet', index=False)
 
-import matplotlib.pyplot as plt
 
-# Convert only needed columns to numpy (cheap)
-gates = selected_samples_df.select("gates").to_numpy().flatten()
-depth = selected_samples_df.select("depth").to_numpy().flatten()
+# selected_samples_df_pd['enc_id'].value_counts()
+#
+# ################################
+#
+# import matplotlib.pyplot as plt
+#
+# # Convert only needed columns to numpy (cheap)
+# gates = selected_samples_df.select("gates").to_numpy().flatten()
+# depth = selected_samples_df.select("depth").to_numpy().flatten()
+#
+# plt.figure(figsize=(8, 6))
+# plt.scatter(gates, depth, s=1, alpha=0.2)
+# plt.xlabel("Gates")
+# plt.ylabel("Depth")
+# plt.title("Scatter Plot of Gates vs Depth")
+# plt.show()
 
-plt.figure(figsize=(8, 6))
-plt.scatter(gates, depth, s=1, alpha=0.2)
-plt.xlabel("Gates")
-plt.ylabel("Depth")
-plt.title("Scatter Plot of Gates vs Depth")
-plt.show()
+
+df = pl.read_parquet('/mnt/nvme/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/data_subset_260306_ref.parquet')
+
+selected_samples_df_pd = pl.read_parquet('/mnt/nvme/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/data_subset_260306.parquet')
+
+df_sel = df.filter(pl.col("circuit_id_int").is_in(selected_samples_df_pd["circuit_id_int"].to_list()))
+
+df_sel.write_parquet('/mnt/nvme/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/gnn_data_collection/data_subset_260306_final_ref.parquet')
+
+
+

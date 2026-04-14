@@ -575,6 +575,8 @@ def generate_prototype_patterns(
                 if epoch_idx < sinkhorn_start_epoch:
                     loss = output.mean()
                     sharp_loss = 0
+                    div_loss = 0
+                    alpha = 0
                 else:
                     loss = output.mean() + alpha * sharp_loss + beta_div * div_loss
                     sharp_loss = sharp_loss.item()
@@ -589,7 +591,9 @@ def generate_prototype_patterns(
                     "epoch": epoch_idx,
                     "average_score": torch.mean(output).item(),
                     "sharp_loss": sharp_loss,
+                    "div_loss": div_loss,
                     "overall_loss": loss.item(),
+                    "sharp_weight": alpha,
                 }
 
                 for key, value in info_dict.items():
@@ -613,6 +617,10 @@ def generate_prototype_patterns(
         values=values,
         target_nb=target_nb,
     )
+
+    # all_prototypes_score = lit_model.transformer(data['all_prototypes'].to('cuda'), test_values)
+    #
+    # torch.save(all_prototypes_score[0].to('cpu').detach(), "output_check.pt")
 
     return data
 

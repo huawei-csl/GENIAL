@@ -19,7 +19,7 @@ device_nb: null
 selection_metric: "mockturtle_gates"
 n_best_select: 2
 scripts_per_step: 1
-compression_scripts_per_step: 3
+compression_scripts_per_step: 1
 skip_intermediate_metrics_extraction: False
 measure_initial_timings_only: False
 successive_compressions: 1
