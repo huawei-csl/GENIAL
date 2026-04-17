@@ -299,3 +299,5 @@ class ScoreComputeHelper:
                 f"Arg `score_rescale_mode` should be among {ScoreComputeHelper.scaler_map.keys()}, "
                 f"got {score_rescale_mode}"
             )
+
+        print('t')

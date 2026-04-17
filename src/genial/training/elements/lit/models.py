@@ -475,7 +475,8 @@ class DefaultLitTransformer(AbstractLitModule):
         ).unsqueeze(0)
 
         y_tc, _ = self.transformer(tc_tensor.to(values.device), values[:1])
-
+        target_mean, target_std = self.trainer.datamodule.dataset_valid.scaling_args.values()
+        y_tc_act = target_mean + target_std * y_tc
 
 
         # Note: we use mse_loss as validation loss to be able to compare their values no matter which criterion is used
@@ -484,6 +485,7 @@ class DefaultLitTransformer(AbstractLitModule):
             "loss/mse_loss": mse_loss,
             "loss/kl_loss": kl_loss,
             "monitor/tc_score": y_tc,
+            "monitor/tc_actual": y_tc_act,
         }
         self.log_dict(log_dict, on_epoch=True)
 
