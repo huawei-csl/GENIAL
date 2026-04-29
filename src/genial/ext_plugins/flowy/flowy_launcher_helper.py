@@ -242,14 +242,15 @@ class FlowyLauncherHelper:
             "tb_files/tb_files_final_circuit/testbench.py",
             "tb_files/tb_files_final_circuit/encoding.json",
             "final_gen_design_files/mydesign_mockturtle_cleaned.v",
-            "final_gen_design_files/aig_cache.tar.gz",
+            # "final_gen_design_files/aig_cache.tar.gz",
             # "final_gen_design_files/flowy_record.parquet",
         ]
         flowy_record_path = ["final_gen_design_files/flowy_record.parquet"]
         mig_circuit_paths = [
             f"final_gen_design_files/mig_circuits_{round_range}.parquet" for round_range in range(1_000, 50_001, 1_000)
         ]
-        to_get_paths_all = flowy_record_path + mig_circuit_paths
+        aig_cache_path = ["final_gen_design_files/aig_cache.tar.gz",]
+        to_get_paths_all = flowy_record_path + mig_circuit_paths + aig_cache_path
 
         if not self.design_output_dir_path.exists():
             self.design_output_dir_path.mkdir(parents=True, exist_ok=True)
