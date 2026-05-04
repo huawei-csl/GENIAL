@@ -57,8 +57,13 @@ print(len(set(os.listdir(gen_dir_12)) - set(os.listdir(syn_dir_12))))
 
 
 
-gen_dir_proto_b = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_copy_260415b/'
-syn_dir_proto_b = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_copy_260415b/'
+# gen_dir_proto_b = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_copy_260415b/'
+# syn_dir_proto_b = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_copy_260415b/'
+
+gen_dir_proto_b = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_cache_260430/'
+syn_dir_proto_b = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_cache_260430/'
+
+
 
 
 diff = list(set(os.listdir(gen_dir_proto_b))-set(os.listdir(syn_dir_proto_b)))
@@ -68,9 +73,9 @@ for f in diff:
     shutil.rmtree(os.path.join(gen_dir_proto_b, f))
 
 
-for f in os.listdir(gen_dir_proto):
-    os.rename(gen_dir_proto + f, gen_dir_proto + f.replace('res_0', 'res_1'))
-    os.rename(syn_dir_proto + f, syn_dir_proto + f.replace('res_0', 'res_1'))
+for f in os.listdir(gen_dir_proto_b):
+    os.rename(gen_dir_proto_b + f, gen_dir_proto_b + f.replace('res_0', 'res_2'))
+    os.rename(syn_dir_proto_b + f, syn_dir_proto_b + f.replace('res_0', 'res_2'))
 
 
 data_list = []
@@ -102,8 +107,8 @@ df100.plot.scatter(x='min', y='min_b')
 plt.show()
 
 
-gen_dir_proto = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_proto_260417/'
-syn_dir_proto = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_proto_260417/'
+gen_dir_proto = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out_cache_260430/'
+syn_dir_proto = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out_cache_260430/'
 
 gen_dir_dst = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/generation_out/'
 syn_dir_dst = '/home/ramaudruz/data_dir/4bi_8bo_rnd_in_fix_out/output/multiplier_4bi_8bo_permuti_flowy/flowy_trans_run_12chains_3000steps_gen_iter0/synth_out/'
