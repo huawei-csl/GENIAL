@@ -438,7 +438,7 @@ def generate_prototype_patterns(
     output_plot_dirpath: Path,
     data_save_path: Path,
     nb_gener_prototypes: int = 4096,
-    keep_percentage: float = 0.25,
+    keep_percentage: float = 1,
     **kwargs,
 ):
     """
@@ -457,6 +457,24 @@ def generate_prototype_patterns(
     # Run model on input
     lit_model.transformer.eval()
     assert not lit_model.transformer.training
+    #
+    # print('t')
+    #
+    # data_list = []
+    #
+    # for curr_batch in datamodule.val_dataloader():
+    #     y_tc, _ = lit_model.transformer(curr_batch['encodings'].to('cuda'), curr_batch['values'].to('cuda'))
+    #     target_tmp = curr_batch['scores'].to('cpu').detach().numpy()
+    #     y_tc_tmp = y_tc.to('cpu').detach().numpy()
+    #     for i, dn in enumerate(curr_batch['design_number']):
+    #         data_list.append({
+    #             'des_num': dn,
+    #             'target': target_tmp[i],
+    #             'pred': y_tc_tmp[i],
+    #         })
+    # pd.DataFrame(data_list).to_csv('/home/ramaudruz/data_dir/misc/check_mse_260505/chunk2_pred.csv', index=False)
+    #
+    # raise ValueError('t')
 
     # Setting up input preparation
     data = next(iter(datamodule.predict_dataloader()))  # Get a sample of data to get the correct shape
@@ -1157,7 +1175,7 @@ def do_prototype_generation_main(dir_config: ConfigDir, model_workers_kwargs: di
             **model_workers_kwargs,
             nb_gener_prototypes=dir_config.args_dict.get("nb_gener_prototypes", False),
             data_save_path=gener_dir_config.analysis_out_dir,
-            keep_percentage=dir_config.args_dict.get("keep_percentage", 0.25),
+            keep_percentage=dir_config.args_dict.get("keep_percentage", 1),
         )
     else:
         # Path to prototypes was provided: we want to fix the generated prototypes again

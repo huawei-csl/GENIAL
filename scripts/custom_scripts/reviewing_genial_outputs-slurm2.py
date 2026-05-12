@@ -141,7 +141,7 @@ print(pd.Series(count_dic.values()).value_counts())
 
 counter = 0
 for d in os.listdir(data_dir):
-    if d not in count_dic:
+    if d not in count_dic or count_dic[d] != 6:
         try:
             shutil.rmtree(f'{data_dir}{d}/')
             print(d)
