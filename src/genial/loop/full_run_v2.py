@@ -48,7 +48,7 @@ class SlurmDispatcher:
 
     __valid_nodes__ = [
         "aisrv01",
-        "aisrv02",
+        # "aisrv02",
         "aisrv03",
         # "aime01",
         # "aime02",
@@ -59,7 +59,7 @@ class SlurmDispatcher:
 
     __valid_work_dirpath__ = [
         "/netscratch/aisrv01",
-        "/netscratch/aisrv02",
+        # "/netscratch/aisrv02",
         "/netscratch/aisrv03",
         # "/netscratch/epyc01",
         # "/netscratch/epyc02",
@@ -82,11 +82,13 @@ class SlurmDispatcher:
 
     __task_resources__ = {
         "generate": {"partition": "AI-CPU", "node_list": ["aisrv03"]},
-        "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv02", "aisrv03"]},
+        # "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv02", "aisrv03"]},
+        "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv03"]},
         "analyze": {"partition": "AI-CPU", "node_list": ["aisrv02"]},
         "train": {"partition": "AI-CPU", "node_list": ["aime01", "aime02", "aime03"]},
         "recommend": {"partition": "AI-CPU", "node_list": ["aime01", "aime02", "aime03"]},
         "merge": {"partition": "AI-CPU", "node_list": ["aisrv02"]},
+        # "clean": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv03"]},
         "clean": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv02", "aisrv03"]},
     }
 
