@@ -82,8 +82,8 @@ class SlurmDispatcher:
 
     __task_resources__ = {
         "generate": {"partition": "AI-CPU", "node_list": ["aisrv03"]},
-        # "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv02", "aisrv03"]},
-        "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv03"]},
+        "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv02", "aisrv03"]},
+        # "launch": {"partition": "AI-CPU", "node_list": ["aisrv01", "aisrv03"]},
         "analyze": {"partition": "AI-CPU", "node_list": ["aisrv02"]},
         "train": {"partition": "AI-CPU", "node_list": ["aime01", "aime02", "aime03"]},
         "recommend": {"partition": "AI-CPU", "node_list": ["aime01", "aime02", "aime03"]},
